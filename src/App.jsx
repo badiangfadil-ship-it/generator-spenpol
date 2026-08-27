@@ -88,8 +88,8 @@ function Dashboard({ onLogout }) {
     kotaTanggal: 'Poli-Polia, 14 Juli 2026', elemenList: '1 | PK | Pemahaman Konsep | KP | Keterampilan Proses',
     cpUmum: 'Mata pelajaran Ilmu Pengetahuan Sosial bertujuan membekali peserta didik...',
     cpElemen: 'Pemahaman Konsep: Memahami Lingkungan Sekitar...',
-    kalender: 'Juli | 5 | 3 | SPMB & MPLS\\nAgustus | 4 | 4 | Efektif',
-    rentangNilai: 'Level 1: 0-55 | D\\nLevel 4: 86-100 | A',
+    kalender: 'Juli | 5 | 3 | SPMB & MPLS\nAgustus | 4 | 4 | Efektif',
+    rentangNilai: 'Level 1: 0-55 | D\nLevel 4: 86-100 | A',
     modelPembelajaran: 'Problem Based Learning (PBL)', dataSebelumnya: '', githubToken: ''
   });
 
@@ -119,8 +119,8 @@ function Dashboard({ onLogout }) {
                  const materi = cells[4]?.textContent.trim();
                  const jpStr = cells[7]?.textContent.trim();
                  if(kode && tujuan && kode.length > 3) {
-                     const jpNum = parseInt(jpStr.match(/\\d+/)?.[0] || 0);
-                     const jpPerPertemuan = parseInt(appData.jpPertemuan.match(/\\d+/)?.[0] || 2);
+                     const jpNum = parseInt(jpStr.match(/\d+/)?.[0] || 0);
+                     const jpPerPertemuan = parseInt(appData.jpPertemuan.match(/\d+/)?.[0] || 2);
                      rawTps.push({ kode, tujuan, materi: materi || 'Materi Umum', jp: jpNum, pertemuan: Math.max(1, Math.ceil(jpNum / jpPerPertemuan)) });
                  }
              }
@@ -132,7 +132,7 @@ function Dashboard({ onLogout }) {
         let currentMeeting = 1; let chunkIndex = 1;
         while (currentMeeting <= tp.pertemuan) {
           const end = Math.min(currentMeeting + 1, tp.pertemuan);
-          chunkedTPs.push({ ...tp, displayTitle: \`[\${tp.kode}] Sesi \${chunkIndex}: Pert \${currentMeeting}-\${end}\`, startMeeting: currentMeeting, endMeeting: end, pertemuanCount: end - currentMeeting + 1, id: \`\${tp.kode}_\${currentMeeting}_\${end}\` });
+          chunkedTPs.push({ ...tp, displayTitle: `[${tp.kode}] Sesi ${chunkIndex}: Pert ${currentMeeting}-${end}`, startMeeting: currentMeeting, endMeeting: end, pertemuanCount: end - currentMeeting + 1, id: `${tp.kode}_${currentMeeting}_${end}` });
           currentMeeting += 2; chunkIndex++;
         }
       });
@@ -188,7 +188,7 @@ function Dashboard({ onLogout }) {
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {tabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={\`w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold \${activeTab === tab.id ? 'bg-blue-600' : 'hover:bg-blue-800'}\`}>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold ${activeTab === tab.id ? 'bg-blue-600' : 'hover:bg-blue-800'}`}>
               <tab.icon className="h-5 w-5 mr-3" /><span>{tab.label}</span>
             </button>
           ))}
