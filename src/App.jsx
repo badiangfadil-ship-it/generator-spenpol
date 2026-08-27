@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 const LOGO_URL = "https://cdn.phototourl.com/free/2026-07-19-523222fc-dbc8-4b99-8a72-0a909f4d6586.png";
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+const apiKey = ""; // Dikosongkan untuk runtime/Vercel environment variables
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
 const fetchWithRetry = async (url, options, retries = 5) => {
@@ -169,31 +169,18 @@ Analisis setiap TP. Berdasarkan karakteristik Kompetensi dan KKO (Kata Kerja Ope
      * 86% - 100%: Sangat Baik (Tuntas)
 
 STRUKTUR FORMAT OUTPUT HTML (ATURAN MUTLAK: IDENTITAS 1X DI ATAS, TTD 1X DI BAWAH):
-
 BAGIAN 1: KOP & IDENTITAS (TAMPIL HANYA SATU KALI DI PALING ATAS DOKUMEN)
-- Judul Pembuka: "KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)"
-- Tabel Identitas Perangkat (Sekolah, Mata Pelajaran, Fase/Kelas, Semester, Tahun Ajaran). 
-- PENTING: JANGAN ULANGI tabel identitas ini lagi untuk setiap TP di bawahnya!
-
-BAGIAN 2: DAFTAR KKTP (ULANGI BAGIAN INI UNTUK SETIAP TP YANG ADA)
-Untuk SETIAP TP dalam daftar, sajikan secara berurutan ke bawah:
-- Sub-judul spesifik: [Kode TP] - [Tujuan Pembelajaran] (Contoh: "TP-7.1 - Memahami konsep ruang...")
-- Judul Pendekatan Terpilih (Contoh: "PENDEKATAN 2: RUBRIK").
-- SATU TABEL PENDEKATAN (Hanya tabel untuk pendekatan yang dipilih).
-- Deskripsi intervensi/tindak lanjut atau kesimpulan ketuntasan di bawah tabel.
-- Berikan jarak visual (<br><br>) antar TP agar rapi.
-
+BAGIAN 2: DAFTAR KKTP (ULANGI UNTUK SETIAP TP)
 BAGIAN 3: PENGESAHAN (TAMPIL HANYA SATU KALI DI PALING BAWAH DOKUMEN)
-- Tempatkan blok tanda tangan Kepala Sekolah dan Guru HANYA SATU KALI di akhir seluruh dokumen, SETELAH semua TP selesai dijabarkan. 
-- JANGAN tempatkan tanda tangan di setiap TP.
 
 ${getCommonRules(d)}
 `;
 
+// PROMPT MODUL AJAR DISESUAIKAN DENGAN REFERENSI (DEEP LEARNING, SINTAKS PBL, & LAMPIRAN LKPD)[cite: 5]
 const getPromptModul = (d, tpObj) => `
-Anda adalah seorang Ahli Kurikulum Merdeka yang merancang Modul Ajar Presisi Berorientasi Deep Learning (Mindful, Meaningful, Joyful) sesuai standar dokumen referensi resmi.
+Anda adalah seorang Ahli Kurikulum Merdeka yang merancang Modul Ajar Presisi Berorientasi Deep Learning (Mindful, Meaningful, Joyful) sesuai standar dokumen referensi resmi[cite: 5].
 
-Buat dokumen MODUL AJAR yang komprehensif mengikuti struktur, format tabel, dan komponen persis seperti urutan di bawah ini. JANGAN ubah atau kurangi bagian-bagian utamanya:
+Buat dokumen MODUL AJAR yang komprehensif mengikuti struktur, format tabel, dan komponen persis seperti urutan di bawah ini:
 
 Mata Pelajaran: ${d.mapel}
 Fase / Kelas: ${d.fase}
@@ -202,7 +189,7 @@ Materi Pokok / Topik: ${tpObj.materi}
 Tujuan Pembelajaran (TP) Utama: [${tpObj.kode}] ${tpObj.tujuan}
 Model Pembelajaran: ${d.modelPembelajaran}
 Penyusun: ${d.guru} / ${d.tahun.split('/')[0]}
-Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount} Pertemuan (${tpObj.pertemuanCount * 60} menit atau setara)
+Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount} Pertemuan (${tpObj.pertemuanCount * 60} menit atau setara)[cite: 5]
 
 STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
 
@@ -224,62 +211,62 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">B. Dimensi Profil Lulusan</td>
-    <td style="padding: 6px;">Penalaran kritis, kolaborasi, kreativitas, dan komunikasi</td>
+    <td style="padding: 6px;">Penalaran kritis, kolaborasi, kreativitas, dan komunikasi[cite: 5]</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">C. Model dan Metode</td>
     <td style="padding: 6px;">
       a. Model Pembelajaran: ${d.modelPembelajaran}<br>
-      b. Metode Pembelajaran: Diskusi kelas, diskusi kelompok kecil, presentasi.<br>
-      c. Pendekatan Pembelajaran: Deep Learning (Pembelajaran Mendalam)
+      b. Metode Pembelajaran: Diskusi kelas, diskusi kelompok kecil, presentasi[cite: 5].<br>
+      c. Pendekatan Pembelajaran: Deep Learning (Pembelajaran Mendalam)[cite: 5]
     </td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">D. Mitra Pembelajaran</td>
-    <td style="padding: 6px;">Masyarakat sekitar (Petani, pelaku usaha, atau narasumber relevan)</td>
+    <td style="padding: 6px;">Masyarakat sekitar (Petani, pelaku usaha, atau narasumber relevan)[cite: 5]</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">E. Lingkungan Pembelajaran</td>
     <td style="padding: 6px;">
-      1) Ruang Fisik: Lingkungan sekitar sekolah / kelas<br>
-      2) Ruang Virtual: Google Form untuk refleksi, platform digital pendukung asesmen<br>
-      3) Budaya belajar: Kolaboratif, berpartisipasi aktif, dan rasa ingin tahu tinggi
+      1) Ruang Fisik: Lingkungan sekitar sekolah / kelas[cite: 5]<br>
+      2) Ruang Virtual: Google Form untuk refleksi, platform digital asesmen[cite: 5]<br>
+      3) Budaya belajar: Kolaboratif, berpartisipasi aktif, dan rasa ingin tahu[cite: 5]
     </td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">F. Pemanfaatan Digital</td>
-    <td style="padding: 6px;">Asesmen interaktif menggunakan platform digital (Wordwall / Quizizz / Google Forms)</td>
+    <td style="padding: 6px;">Asesmen interaktif menggunakan platform digital (Wordwall / Quizizz)[cite: 5]</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">G. Sarana dan Prasarana</td>
     <td style="padding: 6px;">
-      ➤ <strong>Sarana:</strong> Laptop, HP, LCD, Proyektor, Kuota Internet<br>
-      ➤ <strong>Prasarana:</strong> Buku peserta didik, buku guru, LKPD
+      ➤ <strong>Sarana:</strong> Laptop, HP, LCD, Proyektor, Kuota Internet[cite: 5]<br>
+      ➤ <strong>Prasarana:</strong> Buku peserta didik, buku guru, LKPD[cite: 5]
     </td>
   </tr>
 </table>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">H. Tujuan Pembelajaran</h4>
 <ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Peserta didik memahami konsep dasar mengenai ${tpObj.materi} melalui diskusi kelas dengan tepat.</li>
-  <li>Peserta didik dapat menganalisis penyebab dan dampak dari ${tpObj.materi} terhadap makhluk hidup dan lingkungan.</li>
-  <li>Peserta didik dapat merancang upaya-upaya pencegahan dan penanggulangan terkait ${tpObj.materi} melalui diskusi kelompok.</li>
-  <li>Peserta didik dapat menyajikan hasil rancangan upaya pencegahan/solusi dalam bentuk karya kreatif (kampanye/infografis/poster).</li>
+  <li>Peserta didik memahami konsep dasar mengenai ${tpObj.materi} melalui diskusi kelas dengan tepat[cite: 5].</li>
+  <li>Peserta didik dapat menganalisis penyebab dan dampak dari ${tpObj.materi} terhadap makhluk hidup dan lingkungan[cite: 5].</li>
+  <li>Peserta didik dapat merancang upaya-upaya pencegahan dan penanggulangan terkait ${tpObj.materi}[cite: 5].</li>
+  <li>Peserta didik dapat menyajikan hasil rancangan upaya pencegahan dalam bentuk karya kreatif[cite: 5].</li>
 </ol>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">I. Pertanyaan Pemantik</h4>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Apa saja dampak utama dari permasalahan ${tpObj.materi} terhadap kehidupan manusia dan lingkungan?</li>
-  <li>Bagaimana fenomena ini memengaruhi ketersediaan sumber daya dan kehidupan sehari-hari?</li>
-  <li>Solusi dan upaya nyata apa yang dapat kita lakukan untuk mengatasi atau beradaptasi dengan kondisi tersebut?</li>
+  <li>Apa saja dampak utama dari permasalahan ${tpObj.materi} terhadap kehidupan manusia dan lingkungan?[cite: 5]</li>
+  <li>Bagaimana fenomena ini memengaruhi ketersediaan sumber daya dan kehidupan sehari-hari?[cite: 5]</li>
+  <li>Solusi dan upaya nyata apa yang dapat kita lakukan untuk mengatasi hal tersebut?[cite: 5]</li>
 </ul>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">J. Materi Esensial</h4>
 <p><strong>Topik: ${tpObj.materi}</strong></p>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Pengertian dan konsep dasar ${tpObj.materi}.</li>
-  <li>Faktor penyebab dan dampak langsung maupun tidak langsung terhadap lingkungan.</li>
-  <li>Upaya mitigasi, adaptasi, serta solusi pemecahan masalah secara berkelanjutan.</li>
+  <li>Pengertian dan konsep dasar ${tpObj.materi}[cite: 5].</li>
+  <li>Faktor penyebab dan dampak langsung maupun tidak langsung terhadap lingkungan[cite: 5].</li>
+  <li>Upaya mitigasi, adaptasi, serta solusi pemecahan masalah[cite: 5].</li>
 </ul>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">K. Langkah-langkah Pembelajaran Mendalam (Deep Learning)</h4>
@@ -295,71 +282,51 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
   <tbody>
     <tr>
       <td style="padding: 8px; font-weight: bold;">Pendahuluan</td>
-      <td style="padding: 8px;">Menciptakan situasi (Memahami)</td>
-      <td style="padding: 8px;">
-        • Guru mengucapkan salam, berdoa bersama, dan mengecek kehadiran.<br>
-        • Melakukan kegiatan <em>mindfulness</em> (berkesadaran) untuk kesiapan belajar.<br>
-        • Guru menampilkan stimulus/gambar fenomena terkait ${tpObj.materi} dan mengajukan pertanyaan pemantik pengalaman siswa (Bermakna).
-      </td>
-      <td style="padding: 8px;">15 menit</td>
+      <td style="padding: 8px;">Menciptakan situasi (Memahami)[cite: 5]</td>
+      <td style="padding: 8px;">• Guru mengucapkan salam, berdoa, dan mengecek kehadiran[cite: 5].<br>• Melakukan mindfulness (berkesadaran)[cite: 5].<br>• Guru menampilkan stimulus/gambar fenomena terkait ${tpObj.materi}[cite: 5].</td>
+      <td style="padding: 8px;">15 menit[cite: 5]</td>
     </tr>
     <tr>
       <td style="padding: 8px; font-weight: bold;" rowspan="4">Kegiatan Inti</td>
-      <td style="padding: 8px;">Tahap 1: Mengorientasikan peserta didik pada masalah</td>
-      <td style="padding: 8px;">
-        • Guru membagikan bahan bacaan/artikel terkait ${tpObj.materi}.<br>
-        • Peserta didik membaca dan merumuskan permasalahan utama dari bacaan tersebut (Memahami & Bermakna).
-      </td>
+      <td style="padding: 8px;">Tahap 1: Mengorientasikan peserta didik pada masalah[cite: 5]</td>
+      <td style="padding: 8px;">• Guru membagikan bahan bacaan/artikel terkait ${tpObj.materi}[cite: 5].<br>• Peserta didik merumuskan permasalahan utama[cite: 5].</td>
       <td style="padding: 8px;" rowspan="4">70 menit</td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 2: Mengorganisasi peserta didik untuk belajar</td>
-      <td style="padding: 8px;">
-        • Siswa dibagi ke dalam kelompok heterogen (3-4 orang).<br>
-        • Guru membagikan LKPD untuk dikerjakan secara bergotong-royong.
-      </td>
+      <td style="padding: 8px;">Tahap 2: Mengorganisasi peserta didik untuk belajar[cite: 5]</td>
+      <td style="padding: 8px;">• Siswa dibagi ke dalam kelompok heterogen[cite: 5].<br>• Guru membagikan LKPD[cite: 5].</td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 3: Membimbing penyelidikan individual/kelompok</td>
-      <td style="padding: 8px;">
-        • Peserta didik berdiskusi aktif mencari solusi dan informasi pendukung dari buku atau internet (Kritis & Kreatif).<br>
-        • Guru memberikan bimbingan/<em>scaffolding</em> bagi kelompok yang memerlukan (Menggembirakan).
-      </td>
+      <td style="padding: 8px;">Tahap 3: Membimbing penyelidikan individual/kelompok[cite: 5]</td>
+      <td style="padding: 8px;">• Peserta didik berdiskusi mencari solusi dari buku/internet[cite: 5].<br>• Guru memberikan scaffolding[cite: 5].</td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 4: Mengembangkan dan menyajikan hasil karya</td>
-      <td style="padding: 8px;">
-        • Kelompok menyusun laporan/hasil karya kreatif (tulisan/poster/infografis/video) tentang solusi pencegahan.<br>
-        • Perwakilan kelompok mempresentasikan hasil diskusinya di depan kelas secara percaya diri (Mengaplikasi).
-      </td>
+      <td style="padding: 8px;">Tahap 4: Mengembangkan dan menyajikan hasil karya[cite: 5]</td>
+      <td style="padding: 8px;">• Kelompok menyusun laporan/hasil karya kreatif[cite: 5].<br>• Presentasi di depan kelas[cite: 5].</td>
     </tr>
     <tr>
       <td style="padding: 8px; font-weight: bold;">Penutup</td>
-      <td style="padding: 8px;">Tahap 5: Menganalisis & mengevaluasi proses pemecahan masalah</td>
-      <td style="padding: 8px;">
-        • Guru bersama peserta didik mengevaluasi dan menyimpulkan hasil pemecahan masalah.<br>
-        • Melakukan refleksi pembelajaran (perasaan, hal penting yang dipelajari, dan kaitan dengan kehidupan sehari-hari).<br>
-        • Pemberian kuis formatif penutup (Wordwall) dan apresiasi kepada seluruh siswa (Berkesadaran).
-      </td>
-      <td style="padding: 8px;">15 menit</td>
+      <td style="padding: 8px;">Tahap 5: Menganalisis & mengevaluasi proses pemecahan masalah[cite: 5]</td>
+      <td style="padding: 8px;">• Evaluasi dan kesimpulan bersama[cite: 5].<br>• Refleksi pembelajaran[cite: 5].<br>• Kuis formatif penutup (Wordwall)[cite: 5].</td>
+      <td style="padding: 8px;">15 menit[cite: 5]</td>
     </tr>
   </tbody>
 </table>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">L. Penilaian atau Asesmen</h4>
 <ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Jenis Asesmen:</strong> Diagnostik non-kognitif, Formatif (proses diskusi), dan Sumatif (tes tertulis / produk).</li>
-  <li><strong>Metode & Instrumen:</strong> Lembar pengamatan kinerja kelompok, rubrik penilaian dimensi profil lulusan (penalaran kritis, kolaborasi, kreativitas, komunikasi), dan tes tertulis.</li>
+  <li><strong>Jenis Asesmen:</strong> Diagnostik non-kognitif, Formatif (proses diskusi), dan Sumatif[cite: 5].</li>
+  <li><strong>Metode & Instrumen:</strong> Lembar pengamatan kinerja kelompok, rubrik penilaian dimensi profil lulusan[cite: 5].</li>
 </ol>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">M. Refleksi Guru dan Peserta Didik</h4>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Refleksi Guru:</strong> Apakah tujuan pembelajaran tercapai? Bagaimana keaktifan siswa selama model ${d.modelPembelajaran} diterapkan?</li>
-  <li><strong>Refleksi Peserta Didik:</strong> Bagian mana yang paling menarik? Apa pelajaran penting yang dapat diterapkan dalam kehidupan sehari-hari?</li>
+  <li><strong>Refleksi Guru:</strong> Apakah tujuan pembelajaran tercapai dengan model ${d.modelPembelajaran}?[cite: 5]</li>
+  <li><strong>Refleksi Peserta Didik:</strong> Bagian mana yang paling menarik dan bermanfaat?[cite: 5]</li>
 </ul>
 
 <div style="page-break-before: always;"></div>
-<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN: LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
+<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN: LEMBAR KERJA PESERTA DIDIK (LKPD)[cite: 5]</h3>
 
 <div style="border: 2px solid #1a3a5c; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
   <h4 style="text-align: center; color: #1a3a5c; margin-top: 0;">LKPD: ANALISIS DAN SOLUSI ${tpObj.materi.toUpperCase()}</h4>
@@ -370,18 +337,18 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
     </tr>
   </table>
 
-  <p><strong>A. Tujuan:</strong> Melalui diskusi, peserta didik dapat menganalisis penyebab, dampak, serta merancang solusi terkait ${tpObj.materi}.</p>
-  <p><strong>B. Rumusan Masalah:</strong> Deskripsikan permasalahan utama yang berkaitan dengan topik ${tpObj.materi} berdasarkan studi kasus/bacaan!</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan hasil diskusi kelompok di sini...</div>
+  <p><strong>A. Tujuan:</strong> Menganalisis penyebab, dampak, serta merancang solusi terkait ${tpObj.materi}[cite: 5].</p>
+  <p><strong>B. Rumusan Masalah:</strong> Deskripsikan permasalahan utama berdasarkan studi kasus/bacaan[cite: 5]!</p>
+  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan hasil diskusi kelompok di sini...</div>
 
-  <p><strong>C. Analisis Penyebab & Dampak:</strong> Tentukan faktor pendorong dan dampak nyata bagi lingkungan dan makhluk hidup.</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan analisis di sini...</div>
+  <p><strong>C. Analisis Penyebab & Dampak:</strong> Tentukan faktor pendorong dan dampak nyata[cite: 5].</p>
+  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan analisis di sini...</div>
 
-  <p><strong>D. Mencari Solusi / Mitigasi:</strong> Rancanglah upaya pencegahan atau penanggulangan terbaik.</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan solusi kreatif di sini...</div>
+  <p><strong>D. Mencari Solusi / Mitigasi:</strong> Rancanglah upaya pencegahan atau penanggulangan terbaik[cite: 5].</p>
+  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan solusi kreatif di sini...</div>
 
-  <p><strong>E. Kesimpulan:</strong> Buatlah kesimpulan singkat dari hasil kerja kelompok Anda.</p>
-  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; color: #a0aec0; font-style: italic;">Tuliskan kesimpulan di sini...</div>
+  <p><strong>E. Kesimpulan:</strong> Buatlah kesimpulan singkat[cite: 5].</p>
+  <div style="border: 1px dashed #718096; min-height: 40px; padding: 8px; color: #a0aec0; font-style: italic;">Tuliskan kesimpulan di sini...</div>
 </div>
 
 ${getCommonRules(d)}
@@ -538,10 +505,14 @@ function Dashboard({ onLogout }) {
   };
 
   const tabs = [
-    { id: 'identitas', icon: Settings, label: 'Data Global' }, { id: 'cp', icon: FileText, label: '1. CP' },
-    { id: 'tp', icon: Layout, label: '2. TP' }, { id: 'atp', icon: ChevronRight, label: '3. ATP' },
-    { id: 'prota', icon: Calendar, label: '4. Prota' }, { id: 'prosem', icon: Calendar, label: '5. Prosem' },
-    { id: 'kktp', icon: CheckCircle2, label: '6. KKTP' }, { id: 'modul', icon: BookOpen, label: '7. Modul' },
+    { id: 'identitas', icon: Settings, label: 'Data Global' }, 
+    { id: 'cp', icon: FileText, label: '1. CP' },
+    { id: 'tp', icon: Layout, label: '2. TP' }, 
+    { id: 'atp', icon: ChevronRight, label: '3. ATP' },
+    { id: 'prota', icon: Calendar, label: '4. Prota' }, 
+    { id: 'prosem', icon: Calendar, label: '5. Prosem' },
+    { id: 'kktp', icon: CheckCircle2, label: '6. KKTP' }, 
+    { id: 'modul', icon: BookOpen, label: '7. Modul' },
   ];
 
   return (
