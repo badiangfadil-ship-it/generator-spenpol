@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 const LOGO_URL = "https://cdn.phototourl.com/free/2026-07-19-523222fc-dbc8-4b99-8a72-0a909f4d6586.png";
-const apiKey = ""; // Left empty for runtime canvas proxy injection
+const apiKey = "AIzaSyDAF_Xfz16JTQ8MgXqURGGTsFqGmMAOfpk"; // Left empty for runtime canvas proxy injection
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
 const fetchWithRetry = async (url, options, retries = 5) => {
