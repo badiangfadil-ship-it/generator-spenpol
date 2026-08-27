@@ -303,13 +303,18 @@ Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]:</strong>" diikuti
 <strong>Proses (Formatif):</strong> Jenis: Formatif. Bentuk: [misalnya observasi dan rubrik]. Teknik: [uraikan teknik pencatatan selama diskusi/latihan kelompok].<br>
 <strong>Akhir (Sumatif):</strong> Jenis: Sumatif. Bentuk: [misalnya tes tertulis]. Teknik: [uraikan bentuk soal uraian/pilihan ganda kontekstual].</p>
 
-<table border="0" style="width: 100%; text-align: center; margin-top: 3rem; page-break-inside: avoid;">
+PENTING - BAGIAN TANDA TANGAN (WAJIB DIPATUHI):
+- Bagian tanda tangan di bawah ini HANYA BOLEH MUNCUL SATU KALI di seluruh dokumen, yaitu tepat di sini, setelah "E. Asesmen Pembelajaran" dan sebelum bagian LAMPIRAN.
+- JANGAN membuat, mengulang, atau menyisipkan blok tanda tangan (Menyetujui/Kepala Sekolah/Guru Mapel/NIP) di bagian LAMPIRAN maupun di bagian LEMBAR KERJA PESERTA DIDIK (LKPD). Kedua bagian tersebut TIDAK memerlukan tanda tangan sama sekali.
+- Gunakan tabel dengan garis/border yang TIDAK TERLIHAT (invisible) sebagai wadah tanda tangan, persis seperti markup di bawah ini, tanpa menambahkan atribut border atau style border apa pun pada tabel maupun sel-selnya.
+
+<table border="0" cellpadding="0" cellspacing="0" style="width: 100%; border: none; border-collapse: collapse; text-align: center; margin-top: 3rem; page-break-inside: avoid;">
   <tr>
-    <td style="width: 50%; vertical-align: top;">
+    <td style="width: 50%; vertical-align: top; border: none;">
       Menyetujui,<br>Kepala ${d.sekolah}<br><br><br><br>
       <b><u>${d.kepsek}</u></b><br>NIP. ${d.nipKepsek}
     </td>
-    <td style="width: 50%; vertical-align: top;">
+    <td style="width: 50%; vertical-align: top; border: none;">
       ${d.kotaTanggal}<br>Guru Mata Pelajaran<br><br><br><br>
       <b><u>${d.guru}</u></b><br>NIP. ${d.nipGuru}
     </td>
@@ -318,6 +323,7 @@ Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]:</strong>" diikuti
 
 <div style="page-break-before: always;"></div>
 <h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN</h3>
+Catatan: Bagian LAMPIRAN ini TIDAK memerlukan blok tanda tangan (Menyetujui/Kepala Sekolah/Guru Mapel/NIP). JANGAN menambahkan tabel atau baris tanda tangan apa pun di bagian ini.
 
 <h4 style="color: #1a3a5c;">1. Asesmen Awal Pembelajaran</h4>
 <p>Buat TEPAT 5 soal asesmen diagnostik (lisan/tertulis singkat) untuk mengukur kesiapan/pengetahuan prasyarat peserta didik terhadap materi ${tpObj.materi}. Setiap soal WAJIB disertai kunci jawaban singkat. Gunakan daftar bernomor (list) dengan format:<br>
@@ -355,6 +361,7 @@ Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]:</strong>" diikuti
 
 <div style="page-break-before: always;"></div>
 <h3 style="text-align: center; color: #1a3a5c;">LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
+Catatan: Bagian LKPD ini TIDAK memerlukan blok tanda tangan (Menyetujui/Kepala Sekolah/Guru Mapel/NIP). JANGAN menambahkan tabel atau baris tanda tangan apa pun di bagian ini.
 
 <h4 style="color: #1a3a5c;">Identitas Diri</h4>
 <table style="width: 100%; border: none; margin-bottom: 15px;" border="0">
