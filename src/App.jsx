@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 const LOGO_URL = "https://cdn.phototourl.com/free/2026-07-19-523222fc-dbc8-4b99-8a72-0a909f4d6586.png";
-const apiKey = ""; // Dikosongkan untuk runtime/Vercel environment variables
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
 const fetchWithRetry = async (url, options, retries = 5) => {
@@ -40,6 +40,8 @@ const generateWithAI = async (systemPrompt, userQuery) => {
   });
 
   let text = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  
+  // Clean markdown html blocks robustly
   text = text.replace(/```html/gi, '').replace(/```/g, '');
   return text.trim();
 };
@@ -169,18 +171,31 @@ Analisis setiap TP. Berdasarkan karakteristik Kompetensi dan KKO (Kata Kerja Ope
      * 86% - 100%: Sangat Baik (Tuntas)
 
 STRUKTUR FORMAT OUTPUT HTML (ATURAN MUTLAK: IDENTITAS 1X DI ATAS, TTD 1X DI BAWAH):
+
 BAGIAN 1: KOP & IDENTITAS (TAMPIL HANYA SATU KALI DI PALING ATAS DOKUMEN)
-BAGIAN 2: DAFTAR KKTP (ULANGI UNTUK SETIAP TP)
+- Judul Pembuka: "KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN (KKTP)"
+- Tabel Identitas Perangkat (Sekolah, Mata Pelajaran, Fase/Kelas, Semester, Tahun Ajaran). 
+- PENTING: JANGAN ULANGI tabel identitas ini lagi untuk setiap TP di bawahnya!
+
+BAGIAN 2: DAFTAR KKTP (ULANGI BAGIAN INI UNTUK SETIAP TP YANG ADA)
+Untuk SETIAP TP dalam daftar, sajikan secara berurutan ke bawah:
+- Sub-judul spesifik: [Kode TP] - [Tujuan Pembelajaran] (Contoh: "TP-7.1 - Memahami konsep ruang...")
+- Judul Pendekatan Terpilih (Contoh: "PENDEKATAN 2: RUBRIK").
+- SATU TABEL PENDEKATAN (Hanya tabel untuk pendekatan yang dipilih).
+- Deskripsi intervensi/tindak lanjut atau kesimpulan ketuntasan di bawah tabel.
+- Berikan jarak visual (<br><br>) antar TP agar rapi.
+
 BAGIAN 3: PENGESAHAN (TAMPIL HANYA SATU KALI DI PALING BAWAH DOKUMEN)
+- Tempatkan blok tanda tangan Kepala Sekolah dan Guru HANYA SATU KALI di akhir seluruh dokumen, SETELAH semua TP selesai dijabarkan. 
+- JANGAN tempatkan tanda tangan di setiap TP.
 
 ${getCommonRules(d)}
 `;
 
-// PROMPT MODUL AJAR DISESUAIKAN DENGAN REFERENSI (DEEP LEARNING, SINTAKS PBL, & LAMPIRAN LKPD)[cite: 5]
 const getPromptModul = (d, tpObj) => `
-Anda adalah seorang Ahli Kurikulum Merdeka yang merancang Modul Ajar Presisi Berorientasi Deep Learning (Mindful, Meaningful, Joyful) sesuai standar dokumen referensi resmi[cite: 5].
+Anda adalah seorang Ahli Kurikulum Merdeka yang merancang Modul Ajar Presisi Berorientasi Deep Learning (Mindful, Meaningful, Joyful) sesuai standar dokumen referensi resmi.
 
-Buat dokumen MODUL AJAR yang komprehensif mengikuti struktur, format tabel, dan komponen persis seperti urutan di bawah ini:
+Buat dokumen MODUL AJAR yang komprehensif mengikuti struktur, format tabel, dan komponen persis seperti urutan di bawah ini. JANGAN ubah atau kurangi bagian-bagian utamanya:
 
 Mata Pelajaran: ${d.mapel}
 Fase / Kelas: ${d.fase}
@@ -189,7 +204,7 @@ Materi Pokok / Topik: ${tpObj.materi}
 Tujuan Pembelajaran (TP) Utama: [${tpObj.kode}] ${tpObj.tujuan}
 Model Pembelajaran: ${d.modelPembelajaran}
 Penyusun: ${d.guru} / ${d.tahun.split('/')[0]}
-Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount} Pertemuan (${tpObj.pertemuanCount * 60} menit atau setara)[cite: 5]
+Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount} Pertemuan (${tpObj.pertemuanCount * 60} menit atau setara)
 
 STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
 
@@ -211,62 +226,62 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">B. Dimensi Profil Lulusan</td>
-    <td style="padding: 6px;">Penalaran kritis, kolaborasi, kreativitas, dan komunikasi[cite: 5]</td>
+    <td style="padding: 6px;">Penalaran kritis, kolaborasi, kreativitas, dan komunikasi</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">C. Model dan Metode</td>
     <td style="padding: 6px;">
       a. Model Pembelajaran: ${d.modelPembelajaran}<br>
-      b. Metode Pembelajaran: Diskusi kelas, diskusi kelompok kecil, presentasi[cite: 5].<br>
-      c. Pendekatan Pembelajaran: Deep Learning (Pembelajaran Mendalam)[cite: 5]
+      b. Metode Pembelajaran: Diskusi kelas, diskusi kelompok kecil, presentasi.<br>
+      c. Pendekatan Pembelajaran: Deep Learning (Pembelajaran Mendalam)
     </td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">D. Mitra Pembelajaran</td>
-    <td style="padding: 6px;">Masyarakat sekitar (Petani, pelaku usaha, atau narasumber relevan)[cite: 5]</td>
+    <td style="padding: 6px;">Masyarakat sekitar (Petani, pelaku usaha, atau narasumber relevan)</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">E. Lingkungan Pembelajaran</td>
     <td style="padding: 6px;">
-      1) Ruang Fisik: Lingkungan sekitar sekolah / kelas[cite: 5]<br>
-      2) Ruang Virtual: Google Form untuk refleksi, platform digital asesmen[cite: 5]<br>
-      3) Budaya belajar: Kolaboratif, berpartisipasi aktif, dan rasa ingin tahu[cite: 5]
+      1) Ruang Fisik: Lingkungan sekitar sekolah / kelas<br>
+      2) Ruang Virtual: Google Form untuk refleksi, platform digital pendukung asesmen<br>
+      3) Budaya belajar: Kolaboratif, berpartisipasi aktif, dan rasa ingin tahu tinggi
     </td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">F. Pemanfaatan Digital</td>
-    <td style="padding: 6px;">Asesmen interaktif menggunakan platform digital (Wordwall / Quizizz)[cite: 5]</td>
+    <td style="padding: 6px;">Asesmen interaktif menggunakan platform digital (Wordwall / Quizizz / Google Forms)</td>
   </tr>
   <tr>
     <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">G. Sarana dan Prasarana</td>
     <td style="padding: 6px;">
-      ➤ <strong>Sarana:</strong> Laptop, HP, LCD, Proyektor, Kuota Internet[cite: 5]<br>
-      ➤ <strong>Prasarana:</strong> Buku peserta didik, buku guru, LKPD[cite: 5]
+      ➤ <strong>Sarana:</strong> Laptop, HP, LCD, Proyektor, Kuota Internet<br>
+      ➤ <strong>Prasarana:</strong> Buku peserta didik, buku guru, LKPD
     </td>
   </tr>
 </table>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">H. Tujuan Pembelajaran</h4>
 <ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Peserta didik memahami konsep dasar mengenai ${tpObj.materi} melalui diskusi kelas dengan tepat[cite: 5].</li>
-  <li>Peserta didik dapat menganalisis penyebab dan dampak dari ${tpObj.materi} terhadap makhluk hidup dan lingkungan[cite: 5].</li>
-  <li>Peserta didik dapat merancang upaya-upaya pencegahan dan penanggulangan terkait ${tpObj.materi}[cite: 5].</li>
-  <li>Peserta didik dapat menyajikan hasil rancangan upaya pencegahan dalam bentuk karya kreatif[cite: 5].</li>
+  <li>Peserta didik memahami konsep dasar mengenai ${tpObj.materi} melalui diskusi kelas dengan tepat.</li>
+  <li>Peserta didik dapat menganalisis penyebab dan dampak dari ${tpObj.materi} terhadap makhluk hidup dan lingkungan.</li>
+  <li>Peserta didik dapat merancang upaya-upaya pencegahan dan penanggulangan terkait ${tpObj.materi} melalui diskusi kelompok.</li>
+  <li>Peserta didik dapat menyajikan hasil rancangan upaya pencegahan/solusi dalam bentuk karya kreatif (kampanye/infografis/poster).</li>
 </ol>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">I. Pertanyaan Pemantik</h4>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Apa saja dampak utama dari permasalahan ${tpObj.materi} terhadap kehidupan manusia dan lingkungan?[cite: 5]</li>
-  <li>Bagaimana fenomena ini memengaruhi ketersediaan sumber daya dan kehidupan sehari-hari?[cite: 5]</li>
-  <li>Solusi dan upaya nyata apa yang dapat kita lakukan untuk mengatasi hal tersebut?[cite: 5]</li>
+  <li>Apa saja dampak utama dari permasalahan ${tpObj.materi} terhadap kehidupan manusia dan lingkungan?</li>
+  <li>Bagaimana fenomena ini memengaruhi ketersediaan sumber daya dan kehidupan sehari-hari?</li>
+  <li>Solusi dan upaya nyata apa yang dapat kita lakukan untuk mengatasi atau beradaptasi dengan kondisi tersebut?</li>
 </ul>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">J. Materi Esensial</h4>
 <p><strong>Topik: ${tpObj.materi}</strong></p>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Pengertian dan konsep dasar ${tpObj.materi}[cite: 5].</li>
-  <li>Faktor penyebab dan dampak langsung maupun tidak langsung terhadap lingkungan[cite: 5].</li>
-  <li>Upaya mitigasi, adaptasi, serta solusi pemecahan masalah[cite: 5].</li>
+  <li>Pengertian dan konsep dasar ${tpObj.materi}.</li>
+  <li>Faktor penyebab dan dampak langsung maupun tidak langsung terhadap lingkungan.</li>
+  <li>Upaya mitigasi, adaptasi, serta solusi pemecahan masalah secara berkelanjutan.</li>
 </ul>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">K. Langkah-langkah Pembelajaran Mendalam (Deep Learning)</h4>
@@ -282,51 +297,71 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
   <tbody>
     <tr>
       <td style="padding: 8px; font-weight: bold;">Pendahuluan</td>
-      <td style="padding: 8px;">Menciptakan situasi (Memahami)[cite: 5]</td>
-      <td style="padding: 8px;">• Guru mengucapkan salam, berdoa, dan mengecek kehadiran[cite: 5].<br>• Melakukan mindfulness (berkesadaran)[cite: 5].<br>• Guru menampilkan stimulus/gambar fenomena terkait ${tpObj.materi}[cite: 5].</td>
-      <td style="padding: 8px;">15 menit[cite: 5]</td>
+      <td style="padding: 8px;">Menciptakan situasi (Memahami)</td>
+      <td style="padding: 8px;">
+        • Guru mengucapkan salam, berdoa bersama, dan mengecek kehadiran.<br>
+        • Melakukan kegiatan <em>mindfulness</em> (berkesadaran) untuk kesiapan belajar.<br>
+        • Guru menampilkan stimulus/gambar fenomena terkait ${tpObj.materi} dan mengajukan pertanyaan pemantik pengalaman siswa (Bermakna).
+      </td>
+      <td style="padding: 8px;">15 menit</td>
     </tr>
     <tr>
       <td style="padding: 8px; font-weight: bold;" rowspan="4">Kegiatan Inti</td>
-      <td style="padding: 8px;">Tahap 1: Mengorientasikan peserta didik pada masalah[cite: 5]</td>
-      <td style="padding: 8px;">• Guru membagikan bahan bacaan/artikel terkait ${tpObj.materi}[cite: 5].<br>• Peserta didik merumuskan permasalahan utama[cite: 5].</td>
+      <td style="padding: 8px;">Tahap 1: Mengorientasikan peserta didik pada masalah</td>
+      <td style="padding: 8px;">
+        • Guru membagikan bahan bacaan/artikel terkait ${tpObj.materi}.<br>
+        • Peserta didik membaca dan merumuskan permasalahan utama dari bacaan tersebut (Memahami & Bermakna).
+      </td>
       <td style="padding: 8px;" rowspan="4">70 menit</td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 2: Mengorganisasi peserta didik untuk belajar[cite: 5]</td>
-      <td style="padding: 8px;">• Siswa dibagi ke dalam kelompok heterogen[cite: 5].<br>• Guru membagikan LKPD[cite: 5].</td>
+      <td style="padding: 8px;">Tahap 2: Mengorganisasi peserta didik untuk belajar</td>
+      <td style="padding: 8px;">
+        • Siswa dibagi ke dalam kelompok heterogen (3-4 orang).<br>
+        • Guru membagikan LKPD untuk dikerjakan secara bergotong-royong.
+      </td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 3: Membimbing penyelidikan individual/kelompok[cite: 5]</td>
-      <td style="padding: 8px;">• Peserta didik berdiskusi mencari solusi dari buku/internet[cite: 5].<br>• Guru memberikan scaffolding[cite: 5].</td>
+      <td style="padding: 8px;">Tahap 3: Membimbing penyelidikan individual/kelompok</td>
+      <td style="padding: 8px;">
+        • Peserta didik berdiskusi aktif mencari solusi dan informasi pendukung dari buku atau internet (Kritis & Kreatif).<br>
+        • Guru memberikan bimbingan/<em>scaffolding</em> bagi kelompok yang memerlukan (Menggembirakan).
+      </td>
     </tr>
     <tr>
-      <td style="padding: 8px;">Tahap 4: Mengembangkan dan menyajikan hasil karya[cite: 5]</td>
-      <td style="padding: 8px;">• Kelompok menyusun laporan/hasil karya kreatif[cite: 5].<br>• Presentasi di depan kelas[cite: 5].</td>
+      <td style="padding: 8px;">Tahap 4: Mengembangkan dan menyajikan hasil karya</td>
+      <td style="padding: 8px;">
+        • Kelompok menyusun laporan/hasil karya kreatif (tulisan/poster/infografis/video) tentang solusi pencegahan.<br>
+        • Perwakilan kelompok mempresentasikan hasil diskusinya di depan kelas secara percaya diri (Mengaplikasi).
+      </td>
     </tr>
     <tr>
       <td style="padding: 8px; font-weight: bold;">Penutup</td>
-      <td style="padding: 8px;">Tahap 5: Menganalisis & mengevaluasi proses pemecahan masalah[cite: 5]</td>
-      <td style="padding: 8px;">• Evaluasi dan kesimpulan bersama[cite: 5].<br>• Refleksi pembelajaran[cite: 5].<br>• Kuis formatif penutup (Wordwall)[cite: 5].</td>
-      <td style="padding: 8px;">15 menit[cite: 5]</td>
+      <td style="padding: 8px;">Tahap 5: Menganalisis & mengevaluasi proses pemecahan masalah</td>
+      <td style="padding: 8px;">
+        • Guru bersama peserta didik mengevaluasi dan menyimpulkan hasil pemecahan masalah.<br>
+        • Melakukan refleksi pembelajaran (perasaan, hal penting yang dipelajari, dan kaitan dengan kehidupan sehari-hari).<br>
+        • Pemberian kuis formatif penutup (Wordwall) dan apresiasi kepada seluruh siswa (Berkesadaran).
+      </td>
+      <td style="padding: 8px;">15 menit</td>
     </tr>
   </tbody>
 </table>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">L. Penilaian atau Asesmen</h4>
 <ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Jenis Asesmen:</strong> Diagnostik non-kognitif, Formatif (proses diskusi), dan Sumatif[cite: 5].</li>
-  <li><strong>Metode & Instrumen:</strong> Lembar pengamatan kinerja kelompok, rubrik penilaian dimensi profil lulusan[cite: 5].</li>
+  <li><strong>Jenis Asesmen:</strong> Diagnostik non-kognitif, Formatif (proses diskusi), dan Sumatif (tes tertulis / produk).</li>
+  <li><strong>Metode & Instrumen:</strong> Lembar pengamatan kinerja kelompok, rubrik penilaian dimensi profil lulusan (penalaran kritis, kolaborasi, kreativitas, komunikasi), dan tes tertulis.</li>
 </ol>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">M. Refleksi Guru dan Peserta Didik</h4>
 <ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Refleksi Guru:</strong> Apakah tujuan pembelajaran tercapai dengan model ${d.modelPembelajaran}?[cite: 5]</li>
-  <li><strong>Refleksi Peserta Didik:</strong> Bagian mana yang paling menarik dan bermanfaat?[cite: 5]</li>
+  <li><strong>Refleksi Guru:</strong> Apakah tujuan pembelajaran tercapai? Bagaimana keaktifan siswa selama model ${d.modelPembelajaran} diterapkan?</li>
+  <li><strong>Refleksi Peserta Didik:</strong> Bagian mana yang paling menarik? Apa pelajaran penting yang dapat diterapkan dalam kehidupan sehari-hari?</li>
 </ul>
 
 <div style="page-break-before: always;"></div>
-<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN: LEMBAR KERJA PESERTA DIDIK (LKPD)[cite: 5]</h3>
+<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN: LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
 
 <div style="border: 2px solid #1a3a5c; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
   <h4 style="text-align: center; color: #1a3a5c; margin-top: 0;">LKPD: ANALISIS DAN SOLUSI ${tpObj.materi.toUpperCase()}</h4>
@@ -337,18 +372,18 @@ STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
     </tr>
   </table>
 
-  <p><strong>A. Tujuan:</strong> Menganalisis penyebab, dampak, serta merancang solusi terkait ${tpObj.materi}[cite: 5].</p>
-  <p><strong>B. Rumusan Masalah:</strong> Deskripsikan permasalahan utama berdasarkan studi kasus/bacaan[cite: 5]!</p>
-  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan hasil diskusi kelompok di sini...</div>
+  <p><strong>A. Tujuan:</strong> Melalui diskusi, peserta didik dapat menganalisis penyebab, dampak, serta merancang solusi terkait ${tpObj.materi}.</p>
+  <p><strong>B. Rumusan Masalah:</strong> Deskripsikan permasalahan utama yang berkaitan dengan topik ${tpObj.materi} berdasarkan studi kasus/bacaan!</p>
+  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan hasil diskusi kelompok di sini...</div>
 
-  <p><strong>C. Analisis Penyebab & Dampak:</strong> Tentukan faktor pendorong dan dampak nyata[cite: 5].</p>
-  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan analisis di sini...</div>
+  <p><strong>C. Analisis Penyebab & Dampak:</strong> Tentukan faktor pendorong dan dampak nyata bagi lingkungan dan makhluk hidup.</p>
+  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan analisis di sini...</div>
 
-  <p><strong>D. Mencari Solusi / Mitigasi:</strong> Rancanglah upaya pencegahan atau penanggulangan terbaik[cite: 5].</p>
-  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan solusi kreatif di sini...</div>
+  <p><strong>D. Mencari Solusi / Mitigasi:</strong> Rancanglah upaya pencegahan atau penanggulangan terbaik.</p>
+  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan solusi kreatif di sini...</div>
 
-  <p><strong>E. Kesimpulan:</strong> Buatlah kesimpulan singkat[cite: 5].</p>
-  <div style="border: 1px dashed #718096; min-height: 40px; padding: 8px; color: #a0aec0; font-style: italic;">Tuliskan kesimpulan di sini...</div>
+  <p><strong>E. Kesimpulan:</strong> Buatlah kesimpulan singkat dari hasil kerja kelompok Anda.</p>
+  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; color: #a0aec0; font-style: italic;">Tuliskan kesimpulan di sini...</div>
 </div>
 
 ${getCommonRules(d)}
@@ -356,7 +391,11 @@ ${getCommonRules(d)}
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  if (!isLoggedIn) return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+
+  if (!isLoggedIn) {
+    return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return <Dashboard onLogout={() => setIsLoggedIn(false)} />;
 }
 
@@ -366,25 +405,56 @@ function LoginScreen({ onLogin }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'Badiangpunya' || password === '') onLogin();
-    else setError('Password salah.');
+    if (password === 'Badiangpunya' || password === '') {
+      onLogin();
+    } else {
+      setError('Password salah. Silakan coba lagi.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <img src={LOGO_URL} alt="Logo" className="mx-auto h-32 w-32 drop-shadow-md animate-bounce" />
-        <h2 className="mt-6 text-3xl font-extrabold text-slate-900">Generator Perangkat Ajar</h2>
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center">
+          <div className="h-32 w-32 flex items-center justify-center">
+            <img src={LOGO_URL} alt="Logo Sekolah" className="max-h-full max-w-full drop-shadow-md animate-bounce" />
+          </div>
+        </div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
+          Generator Perangkat Ajar
+        </h2>
+        <p className="mt-2 text-center text-sm text-slate-600 font-semibold">
+          Kurikulum Merdeka - Deep Learning Spenpol (1 Semester)
+        </p>
       </div>
+
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border">
+        <div className="bg-white py-8 px-4 shadow-xl shadow-blue-900/5 sm:rounded-2xl sm:px-10 border border-slate-100">
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
+              <label className="block text-sm font-medium text-slate-700">Username</label>
+              <input type="text" value="badiang80.id" disabled className="mt-1 block w-full bg-slate-50 border border-slate-300 rounded-md py-3 px-3 text-slate-600 cursor-not-allowed" />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-slate-700">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full border border-slate-300 rounded-md py-3 px-3" placeholder="Password" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full border border-slate-300 rounded-md py-3 px-3 focus:ring-blue-500 focus:border-blue-500" placeholder="isi password" />
               {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             </div>
-            <button type="submit" className="w-full py-3 px-4 rounded-md shadow-sm text-white bg-blue-900 hover:bg-blue-800">Masuk</button>
+            <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 transition-colors">
+              Masuk
+            </button>
+
+            <div className="pt-6 border-t border-slate-200 text-center space-y-4">
+               <div className="bg-red-600 py-3 px-3 rounded-md shadow-md flex items-center justify-center space-x-2 transform hover:scale-105 transition-transform">
+                  <AlertTriangle className="h-6 w-6 text-white animate-pulse" />
+                  <p className="text-sm font-black text-white uppercase tracking-widest">
+                    Khusus Guru Spenpol-One
+                  </p>
+               </div>
+               <p className="text-xs text-slate-400 mt-4 font-medium uppercase tracking-wide">
+                 Desain Oleh Badiang
+               </p>
+            </div>
           </form>
         </div>
       </div>
@@ -395,39 +465,66 @@ function LoginScreen({ onLogin }) {
 function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('identitas');
   const modulPreviewRef = useRef(null);
+
   const [appData, setAppData] = useState({
-    provinsiKota: 'Pemerintah Kabupaten Kolaka Timur', dinas: 'Dinas Pendidikan dan Kebudayaan',
-    sekolah: 'SMP Negeri 1 Poli-Polia', alamat: 'Jl. Drs.H. Abdullah Silondae No.1A',
-    mapel: 'Ilmu Pengetahuan Sosial', singkatan: 'IPS', fase: 'Fase D / Kelas VII',
-    tahun: '2026/2027', semester: '1 (Ganjil)', alokasiWaktu: '36 JP / Semester',
-    jpMinggu: '2 JP/Minggu', jpPertemuan: '2 JP (80 Menit)', guru: 'Badiang,S.Pd.',
-    nipGuru: '198010072005021003', kepsek: 'Badiang, S.Pd.,M.Pd.', nipKepsek: '19801007 200502 1 003',
-    kotaTanggal: 'Poli-Polia, 14 Juli 2026', elemenList: '1 | PK | Pemahaman Konsep | KP | Keterampilan Proses',
-    cpUmum: 'Mata pelajaran Ilmu Pengetahuan Sosial bertujuan membekali peserta didik...',
-    cpElemen: 'Pemahaman Konsep: Memahami Lingkungan Sekitar...',
-    kalender: 'Juli | 5 | 3 | SPMB & MPLS\nAgustus | 4 | 4 | Efektif',
-    rentangNilai: 'Level 1: 0-55 | D\nLevel 4: 86-100 | A',
-    modelPembelajaran: 'Problem Based Learning (PBL)', dataSebelumnya: ''
+    provinsiKota: 'Pemerintah Kabupaten Kolaka Timur',
+    dinas: 'Dinas Pendidikan dan Kebudayaan',
+    sekolah: 'SMP Negeri 1 Poli-Polia',
+    alamat: 'Jl. Drs.H. Abdullah Silondae No.1A Kec. Polia-Polia Kab. Kolaka Timur POS. 93573',
+    mapel: 'Ilmu Pengetahuan Sosial',
+    singkatan: 'IPS',
+    fase: 'Fase D / Kelas VII',
+    tahun: '2026/2027',
+    semester: '1 (Ganjil)',
+    alokasiWaktu: '36 JP / Semester',
+    jpMinggu: '2 JP/Minggu',
+    jpPertemuan: '2 JP (80 Menit)',
+    guru: 'Badiang,S.Pd.',
+    nipGuru: '198010072005021003',
+    kepsek: 'Badiang, S.Pd.,M.Pd.',
+    nipKepsek: '19801007 200502 1 003',
+    kotaTanggal: 'Poli-Polia, 14 Juli 2026',
+    
+    elemenList: '1 | PK | Pemahaman Konsep | KP | Keterampilan Proses',
+    cpUmum: 'Mata pelajaran Ilmu Pengetahuan Sosial pada Kurikulum Merdeka bertujuan untuk membekali peserta didik agar mampu menganalisis hubungan antara kondisi geografis dan aktivitas masyarakat, memahami sejarah lokal, serta menguasai keterampilan proses penyelidikan...',
+    cpElemen: 'Pemahaman Konsep: Memahami Lingkungan Sekitar, Menganalisis Interaksi Sosial, Memahami Sejarah dan Budaya...\nElemen Keterampilan Proses: Peserta didik Mengamati & Bertanya, Mengorganisasikan & Menganalisis, Menarik Kesimpulan & Mengomunikasikan...',
+    
+    kalender: 'Juli | 5 | 3 | SPMB & MPLS\nAgustus | 4 | 4 | Efektif\nSeptember | 5 | 5 | Efektif\nOktober | 4 | 0 | Efektif\nNovember | 4 | 0 | Efektif\nDesember | 4 | 3 | PAS & Libur',
+    rentangNilai: 'Level 1 (Mulai Berkembang): 0-55 | D\nLevel 2 (Berkembang): 56-70 | C\nLevel 3 (Cakap): 71-85 | B\nLevel 4 (Mahir): 86-100 | A',
+    
+    modelPembelajaran: 'Problem Based Learning (PBL)', 
+    dataSebelumnya: '', 
   });
 
-  const [generatedDocs, setGeneratedDocs] = useState({ cp: '', tp: '', atp: '', prota: '', prosem: '', kktp: '', modul: '' });
+  const [generatedDocs, setGeneratedDocs] = useState({
+    cp: '', tp: '', atp: '', prota: '', prosem: '', kktp: '', modul: ''
+  });
+  
   const [extractedTPs, setExtractedTPs] = useState([]);
   const [selectedTPIndex, setSelectedTPIndex] = useState(0);
   const [generatedModuls, setGeneratedModuls] = useState({});
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [progressMsg, setProgressMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleChange = (e) => setAppData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAppData(prev => ({ ...prev, [name]: value }));
+  };
 
   const parseATPForModules = (atpHtmlString) => {
     try {
-      const doc = new DOMParser().parseFromString(atpHtmlString, 'text/html');
-      const rawTps = [];
-      doc.querySelectorAll('table').forEach(table => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(atpHtmlString, 'text/html');
+      const tables = doc.querySelectorAll('table');
+      let rawTps = [];
+      
+      tables.forEach(table => {
         const headerRow = table.querySelector('tr');
         if (headerRow && headerRow.textContent.toLowerCase().includes('kode tp')) {
-          table.querySelectorAll('tr').forEach((row, index) => {
+          const rows = table.querySelectorAll('tr');
+          rows.forEach((row, index) => {
              if(index === 0) return;
              const cells = row.querySelectorAll('td');
              if (cells.length >= 7) {
@@ -435,158 +532,742 @@ function Dashboard({ onLogout }) {
                  const tujuan = cells[3]?.textContent.trim();
                  const materi = cells[4]?.textContent.trim();
                  const jpStr = cells[7]?.textContent.trim();
+                 
                  if(kode && tujuan && kode.length > 3) {
                      const jpNum = parseInt(jpStr.match(/\d+/)?.[0] || 0);
                      const jpPerPertemuan = parseInt(appData.jpPertemuan.match(/\d+/)?.[0] || 2);
-                     rawTps.push({ kode, tujuan, materi: materi || 'Materi Umum', jp: jpNum, pertemuan: Math.max(1, Math.ceil(jpNum / jpPerPertemuan)) });
+                     let pertemuanCalc = Math.max(1, Math.ceil(jpNum / jpPerPertemuan));
+                     
+                     rawTps.push({ 
+                       kode, 
+                       tujuan, 
+                       materi: materi || 'Materi Umum', 
+                       jp: jpNum, 
+                       pertemuan: pertemuanCalc 
+                     });
                  }
              }
           });
         }
       });
+      
+      const uniqueRawTPs = Array.from(new Map(rawTps.map(item => [item.kode, item])).values());
+      
       const chunkedTPs = [];
-      Array.from(new Map(rawTps.map(item => [item.kode, item])).values()).forEach(tp => {
-        let currentMeeting = 1; let chunkIndex = 1;
-        while (currentMeeting <= tp.pertemuan) {
-          const end = Math.min(currentMeeting + 1, tp.pertemuan);
-          chunkedTPs.push({ ...tp, displayTitle: `[${tp.kode}] Sesi ${chunkIndex}: Pert ${currentMeeting}-${end}`, startMeeting: currentMeeting, endMeeting: end, pertemuanCount: end - currentMeeting + 1, id: `${tp.kode}_${currentMeeting}_${end}` });
-          currentMeeting += 2; chunkIndex++;
+      uniqueRawTPs.forEach(tp => {
+        const maxMeetingsPerModul = 2;
+        const totalMeetings = tp.pertemuan;
+        if (totalMeetings <= maxMeetingsPerModul) {
+          chunkedTPs.push({
+            ...tp,
+            displayTitle: `[${tp.kode}] ${tp.tujuan} (Pertemuan 1-${totalMeetings})`,
+            startMeeting: 1,
+            endMeeting: totalMeetings,
+            pertemuanCount: totalMeetings,
+            id: `${tp.kode}_1_${totalMeetings}`
+          });
+        } else {
+          let currentMeeting = 1;
+          let chunkIndex = 1;
+          while (currentMeeting <= totalMeetings) {
+            const end = Math.min(currentMeeting + maxMeetingsPerModul - 1, totalMeetings);
+            const count = end - currentMeeting + 1;
+            chunkedTPs.push({
+              ...tp,
+              displayTitle: `[${tp.kode}] ${tp.tujuan} (Sesi ${chunkIndex}: Pertemuan ${currentMeeting}-${end})`,
+              startMeeting: currentMeeting,
+              endMeeting: end,
+              pertemuanCount: count,
+              chunkIndex: chunkIndex,
+              id: `${tp.kode}_${currentMeeting}_${end}`
+            });
+            currentMeeting += maxMeetingsPerModul;
+            chunkIndex++;
+          }
         }
       });
-      if(chunkedTPs.length > 0) { setExtractedTPs(chunkedTPs); setSelectedTPIndex(0); }
-    } catch(err) { console.error(err); }
+
+      if(chunkedTPs.length > 0) {
+        setExtractedTPs(chunkedTPs);
+        setSelectedTPIndex(0);
+      }
+    } catch(err) {
+      console.error("Gagal mem-parsing ATP:", err);
+    }
   };
 
   const handleGenerateSingle = async (docType) => {
-    setIsGenerating(true); setErrorMsg(''); let currentData = { ...appData };
+    setIsGenerating(true);
+    setErrorMsg('');
+    let currentData = { ...appData };
+
     try {
       let result = '';
-      if (docType === 'cp') result = await generateWithAI(getCommonRules(currentData), getPromptAnalisisCP(currentData));
-      else if (docType === 'tp') result = await generateWithAI(getCommonRules(currentData), getPromptTP(currentData));
+      
+      if (docType === 'cp') {
+         setProgressMsg('Menyusun Analisis CP...');
+         result = await generateWithAI(getCommonRules(currentData), getPromptAnalisisCP(currentData));
+      } 
+      else if (docType === 'tp') {
+         setProgressMsg(`Merumuskan TP (Semester ${appData.semester})...`);
+         result = await generateWithAI(getCommonRules(currentData), getPromptTP(currentData));
+      } 
       else if (docType === 'atp') {
-         if (!generatedDocs.tp) throw new Error("Generate TP terlebih dahulu!");
+         if (!generatedDocs.tp) throw new Error("Silakan Generate dokumen TP (Tujuan Pembelajaran) terlebih dahulu!");
+         setProgressMsg(`Menyusun ATP (Semester ${appData.semester})...`);
          currentData.dataSebelumnya = generatedDocs.tp;
          result = await generateWithAI(getCommonRules(currentData), getPromptATP(currentData));
          parseATPForModules(result);
-      } else {
-         if (!generatedDocs.atp) throw new Error("Generate ATP terlebih dahulu!");
-         currentData.dataSebelumnya = generatedDocs.atp;
-         if (docType === 'prota') result = await generateWithAI(getCommonRules(currentData), getPromptProta(currentData));
-         else if (docType === 'prosem') result = await generateWithAI(getCommonRules(currentData), getPromptProsem(currentData));
-         else if (docType === 'kktp') result = await generateWithAI(getCommonRules(currentData), getPromptKKTP(currentData));
+      } 
+      else if (docType === 'prota') {
+         if (!generatedDocs.tp && !generatedDocs.atp) throw new Error("Silakan Generate dokumen TP / ATP terlebih dahulu!");
+         setProgressMsg(`Menyusun Program Tahunan (Fokus Semester ${appData.semester})...`);
+         currentData.dataSebelumnya = generatedDocs.atp || generatedDocs.tp;
+         result = await generateWithAI(getCommonRules(currentData), getPromptProta(currentData));
+      } 
+      else if (docType === 'prosem') {
+         if (!generatedDocs.tp && !generatedDocs.atp) throw new Error("Silakan Generate dokumen TP / ATP terlebih dahulu!");
+         setProgressMsg(`Menyusun Program Semester ${appData.semester}...`);
+         currentData.dataSebelumnya = generatedDocs.atp || generatedDocs.tp;
+         result = await generateWithAI(getCommonRules(currentData), getPromptProsem(currentData));
+      } 
+      else if (docType === 'kktp') {
+         if (!generatedDocs.tp && !generatedDocs.atp) throw new Error("Silakan Generate dokumen TP / ATP terlebih dahulu!");
+         setProgressMsg(`Merumuskan KKTP dengan format baku 1 Pendekatan terpilih (Semester ${appData.semester})...`);
+         currentData.dataSebelumnya = generatedDocs.atp || generatedDocs.tp;
+         result = await generateWithAI(getCommonRules(currentData), getPromptKKTP(currentData));
       }
-      setGeneratedDocs(prev => ({ ...prev, [docType]: result })); setProgressMsg('Selesai!'); setTimeout(() => setProgressMsg(''), 2000);
-    } catch (err) { setErrorMsg(err.message); } finally { setIsGenerating(false); }
+
+      setGeneratedDocs(prev => ({ ...prev, [docType]: result }));
+      setProgressMsg(`Dokumen berhasil dibuat!`);
+      setTimeout(() => setProgressMsg(''), 3000);
+      
+    } catch (err) {
+      setErrorMsg(err.message);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleGenerateModul = async (tpIndex = selectedTPIndex) => {
     if (extractedTPs.length === 0) return;
-    setIsGenerating(true); setErrorMsg(''); const targetTP = extractedTPs[tpIndex];
+    setIsGenerating(true);
+    setErrorMsg('');
+    const targetTP = extractedTPs[tpIndex];
     try {
+      setProgressMsg(`Menyusun Modul Ajar Presisi untuk ${targetTP.displayTitle}...`);
       const modul = await generateWithAI(getCommonRules(appData), getPromptModul(appData, targetTP));
+      
       setGeneratedModuls(prev => ({ ...prev, [targetTP.id]: modul }));
-      setProgressMsg('Berhasil!'); setTimeout(() => { setProgressMsg(''); modulPreviewRef.current?.scrollIntoView(); }, 1500);
-    } catch (err) { setErrorMsg(err.message); } finally { setIsGenerating(false); }
+      setProgressMsg(`Modul Ajar ${targetTP.kode} Berhasil Dibuat!`);
+      
+      setTimeout(() => {
+        setProgressMsg('');
+        modulPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 1500);
+
+    } catch (err) {
+      setErrorMsg(`Gagal membuat Modul Ajar: ${err.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateSemuaModul = async () => {
+    if (extractedTPs.length === 0) return;
+    setIsGenerating(true);
+    setErrorMsg('');
+    
+    let successCount = 0;
+    for (let i = 0; i < extractedTPs.length; i++) {
+       const targetTP = extractedTPs[i];
+       try {
+          setSelectedTPIndex(i);
+          setProgressMsg(`Memproses ${i+1}/${extractedTPs.length} - ${targetTP.displayTitle}...`);
+          const modul = await generateWithAI(getCommonRules(appData), getPromptModul(appData, targetTP));
+          
+          setGeneratedModuls(prev => ({ ...prev, [targetTP.id]: modul }));
+          successCount++;
+          
+          setTimeout(() => {
+             modulPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          }, 500);
+          
+       } catch (err) {
+          setErrorMsg(`Gagal pada ${targetTP.displayTitle}: ${err.message}. Lanjut ke berikutnya...`);
+          await new Promise(res => setTimeout(res, 2000));
+       }
+    }
+    
+    setIsGenerating(false);
+    setProgressMsg(`Selesai! Berhasil membuat ${successCount} Modul Ajar.`);
+    setTimeout(() => setProgressMsg(''), 5000);
   };
 
   const getModulContentForExport = () => {
-     return extractedTPs.map(tp => generatedModuls[tp.id]).filter(Boolean).join('<div style="page-break-before: always;"></div>');
+     return extractedTPs
+       .map(tp => generatedModuls[tp.id])
+       .filter(Boolean)
+       .join('<div style="page-break-before: always;"></div>');
   };
 
   const handleDownloadWord = () => {
+    const isLandscape = ['prosem', 'atp', 'kktp'].includes(activeTab);
     let content = activeTab === 'modul' ? getModulContentForExport() : generatedDocs[activeTab];
-    const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export Doc</title><style>body { font-family: Calibri; } table { width: 100%; border-collapse: collapse; } th, td { border: 1pt solid black; padding: 5pt; }</style></head><body>`;
-    const footer = "</body></html>";
-    const blob = new Blob(['\ufeff', header + content + footer], { type: 'application/msword' });
+    
+    const header = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+            xmlns:w='urn:schemas-microsoft-com:office:word' 
+            xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <meta charset='utf-8'>
+        <title>Export Doc</title>
+        <style>
+          body { font-family: 'Calibri', 'Arial', sans-serif; font-size: 11pt; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 12pt; border: 1pt solid windowtext; }
+          th, td { border: 1pt solid windowtext; padding: 5pt; vertical-align: top; }
+          th { background-color: #1a3a5c; color: white; }
+          h1, h2, h3 { color: #1a3a5c; }
+          
+          @page WordSectionPortrait {
+              size: 595.3pt 841.9pt; 
+              margin: 72pt 72pt 72pt 72pt;
+              mso-header-margin: 36pt;
+              mso-footer-margin: 36pt;
+              mso-paper-source: 0;
+          }
+          @page WordSectionLandscape {
+              size: 841.9pt 595.3pt; 
+              margin: 72pt 72pt 72pt 72pt;
+              mso-header-margin: 36pt;
+              mso-footer-margin: 36pt;
+              mso-paper-source: 0;
+          }
+          div.WordSectionPortrait { page: WordSectionPortrait; }
+          div.WordSectionLandscape { page: WordSectionLandscape; }
+        </style>
+      </head>
+      <body>
+        <div class="${isLandscape ? 'WordSectionLandscape' : 'WordSectionPortrait'}">
+    `;
+    const footer = "</div></body></html>";
+    const htmlContent = header + content + footer;
+    
+    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `ADM_${activeTab.toUpperCase()}.doc`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    a.href = url;
+    a.download = `ADM_${activeTab.toUpperCase()}_${appData.singkatan}_${appData.fase.split('/')[0].trim()}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadHTML = () => {
+    const isLandscape = ['prosem', 'atp', 'kktp'].includes(activeTab);
+    let content = activeTab === 'modul' ? getModulContentForExport() : generatedDocs[activeTab];
+    const htmlContent = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Dokumen_${activeTab}</title><style>body { font-family: Calibri, sans-serif; padding: 2cm; } table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; border: 1px solid black; } th, td { border: 1px solid black; padding: 0.5rem; text-align: left; vertical-align: top; } th { background-color: #1a3a5c !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; } h1, h2, h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1a3a5c; } @media print { @page { size: A4 ${isLandscape ? 'landscape' : 'portrait'}; margin: 1.5cm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } } </style></head><body>${content}</body></html>`;
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Dokumen_${activeTab}.html`;
+    a.click();
+  };
+
+  const handlePrintHTML = () => {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '100vw'; 
+    iframe.style.height = '100vh';
+    iframe.style.border = '0';
+    iframe.style.zIndex = '-9999'; 
+    document.body.appendChild(iframe);
+
+    const isLandscape = ['prosem', 'atp', 'kktp'].includes(activeTab);
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Cetak Dokumen - ${activeTab}</title>
+        <style>
+          body { font-family: 'Calibri', sans-serif; padding: 0; margin: 0; color: #000; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; border: 1pt solid black; }
+          th, td { border: 1pt solid #000; padding: 0.5rem; text-align: left; vertical-align: top; }
+          th { background-color: #1a3a5c !important; color: white !important; font-weight: bold; }
+          h1, h2, h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1a3a5c; }
+          .header-kop { text-align: center; border-bottom: 3px solid black; padding-bottom: 1rem; margin-bottom: 2rem; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          
+          @media print {
+             @page { 
+               size: A4 ${isLandscape ? 'landscape' : 'portrait'}; 
+               margin: 1.5cm; 
+             }
+             body { padding: 0 !important; }
+          }
+        </style>
+      </head>
+      <body>
+        ${activeTab === 'modul' ? getModulContentForExport() : generatedDocs[activeTab]}
+      </body>
+      </html>
+    `;
+    
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(htmlContent);
+    iframe.contentWindow.document.close();
+    
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => document.body.removeChild(iframe), 1500);
+    }, 1000); 
   };
 
   const tabs = [
-    { id: 'identitas', icon: Settings, label: 'Data Global' }, 
-    { id: 'cp', icon: FileText, label: '1. CP' },
-    { id: 'tp', icon: Layout, label: '2. TP' }, 
+    { id: 'identitas', icon: Settings, label: 'Data Global (Input)' },
+    { id: 'cp', icon: FileText, label: '1. Capaian Pembelajaran' },
+    { id: 'tp', icon: Layout, label: '2. Tujuan Pembelajaran' },
     { id: 'atp', icon: ChevronRight, label: '3. ATP' },
-    { id: 'prota', icon: Calendar, label: '4. Prota' }, 
+    { id: 'prota', icon: Calendar, label: '4. Prota' },
     { id: 'prosem', icon: Calendar, label: '5. Prosem' },
-    { id: 'kktp', icon: CheckCircle2, label: '6. KKTP' }, 
-    { id: 'modul', icon: BookOpen, label: '7. Modul' },
+    { id: 'kktp', icon: CheckCircle2, label: '6. KKTP' },
+    { id: 'modul', icon: BookOpen, label: '7. Modul Ajar' },
   ];
 
+  const docNames = {
+    cp: 'Capaian Pembelajaran',
+    tp: 'Tujuan Pembelajaran',
+    atp: 'Alur Tujuan Pembelajaran',
+    prota: 'Program Tahunan',
+    prosem: 'Program Semester',
+    kktp: 'Kriteria Ketercapaian (KKTP)'
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row text-slate-900">
-      <aside className="w-full md:w-64 bg-blue-900 border-r border-blue-800 flex-col text-white print:hidden">
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-900 flex flex-col md:flex-row">
+      {/* Sidebar Navigation */}
+      <aside className="w-full md:w-64 bg-blue-900 border-r border-blue-800 flex-shrink-0 flex flex-col print:hidden no-print text-white">
         <div className="p-6 border-b border-blue-800 flex items-center space-x-3 bg-blue-950">
-          <div className="h-12 w-12 bg-white rounded-full p-1"><img src={LOGO_URL} alt="Logo" className="max-h-full max-w-full" /></div>
-          <div><h1 className="font-bold text-base">Generator Spenpol</h1></div>
+          <div className="h-12 w-12 flex items-center justify-center bg-white rounded-full p-1 shadow-md">
+            <img src={LOGO_URL} alt="Logo Sekolah" className="max-h-full max-w-full drop-shadow-sm" />
+          </div>
+          <div>
+            <h1 className="font-bold text-white text-base">Generator Spenpol</h1>
+            <p className="text-xs text-blue-200">Perangkat 1 Semester</p>
+          </div>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {tabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold ${activeTab === tab.id ? 'bg-blue-600' : 'hover:bg-blue-800'}`}>
-              <tab.icon className="h-5 w-5 mr-3" /><span>{tab.label}</span>
-            </button>
-          ))}
+        
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
+          {tabs.map(tab => {
+            const hasGenerated = tab.id === 'modul' ? Object.keys(generatedModuls).length > 0 : !!generatedDocs[tab.id];
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  activeTab === tab.id 
+                    ? 'bg-blue-600 text-white shadow-md transform scale-[1.02]' 
+                    : 'text-blue-100 hover:bg-blue-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <tab.icon className={`h-5 w-5 ${activeTab === tab.id ? 'text-white' : 'text-blue-300'}`} />
+                  <span>{tab.label}</span>
+                </div>
+                {hasGenerated && tab.id !== 'identitas' && (
+                  <div className="bg-green-500 rounded-full p-0.5">
+                     <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </nav>
+        
+        <div className="p-4 border-t border-blue-800 bg-blue-950">
+          <button onClick={onLogout} className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 text-sm font-medium text-red-300 hover:bg-red-900/50 hover:text-red-200 rounded-lg transition-colors border border-transparent hover:border-red-800">
+            <LogOut className="h-4 w-4" /><span>Keluar Aplikasi</span>
+          </button>
+        </div>
       </aside>
 
-      <main className="flex-1 p-6 overflow-auto">
-        {activeTab === 'identitas' && (
-          <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow">
-            <h3 className="font-bold text-lg mb-4">Input Data Utama</h3>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div><label className="block text-sm font-bold">Sekolah</label><input type="text" name="sekolah" value={appData.sekolah} onChange={handleChange} className="w-full border p-2 rounded" /></div>
-              <div><label className="block text-sm font-bold">Mapel</label><input type="text" name="mapel" value={appData.mapel} onChange={handleChange} className="w-full border p-2 rounded" /></div>
-            </div>
-            <div><label className="block text-sm font-bold">Elemen CP</label><textarea name="elemenList" rows={3} value={appData.elemenList} onChange={handleChange} className="w-full border p-2 rounded" /></div>
-          </div>
-        )}
+      {/* Main Container */}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center print:hidden no-print z-10 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-800 flex items-center">{tabs.find(t => t.id === activeTab)?.label}</h2>
+          {activeTab !== 'identitas' && isGenerating && (
+             <div className="flex items-center space-x-2 text-sm text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Sedang di-generate oleh AI...</span>
+             </div>
+          )}
+        </header>
 
-        {activeTab === 'modul' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white p-6 rounded-xl shadow mb-6">
-              <label className="block font-bold mb-2">Pilih Sesi Pembelajaran</label>
-              <select value={selectedTPIndex} onChange={(e) => setSelectedTPIndex(Number(e.target.value))} className="w-full border p-2 mb-4 rounded">
-                {extractedTPs.map((tp, idx) => <option key={idx} value={idx}>{tp.displayTitle}</option>)}
-              </select>
-              <button onClick={() => handleGenerateModul(selectedTPIndex)} disabled={isGenerating} className="w-full py-3 bg-green-700 text-white font-bold rounded">{isGenerating ? 'Memproses...' : 'Generate Sesi Ini'}</button>
-            </div>
-            {Object.keys(generatedModuls).length > 0 && extractedTPs.map(tp => generatedModuls[tp.id] ? <div key={tp.id} className="bg-white p-10 mb-8 mx-auto shadow" dangerouslySetInnerHTML={{ __html: generatedModuls[tp.id] }} /> : null)}
-            {Object.keys(generatedModuls).length > 0 && (
-              <button onClick={handleDownloadWord} className="px-6 py-3 bg-blue-700 text-white font-bold rounded shadow">Download Semua Modul (.doc)</button>
-            )}
-            <div ref={modulPreviewRef}></div>
-          </div>
-        )}
+        <div className="flex-1 overflow-auto bg-slate-100/50 p-6 print:p-0 print:bg-white flex flex-col relative custom-scrollbar">
+          
+          {/* TAB 1: FORM DATA GLOBAL */}
+          {activeTab === 'identitas' && (
+            <div className="max-w-5xl mx-auto w-full bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col print:hidden no-print flex-shrink-0">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 className="font-bold text-slate-800 text-lg">Input Data Global</h3>
+                <p className="text-sm text-slate-500 mt-1">Isi identitas dan komponen dasar untuk 1 Semester. Setelah selesai, silakan buka menu tab di kiri satu per satu untuk men-generate dokumen.</p>
+              </div>
+              
+              <div className="p-6 overflow-visible space-y-8 flex-1">
+                <section>
+                   <h4 className="font-semibold text-blue-900 border-b border-slate-200 pb-2 mb-4">Blok 1: Identitas Sekolah & Guru</h4>
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Input name="provinsiKota" label="Provinsi / Kota" val={appData.provinsiKota} onChange={handleChange} disabled={true} />
+                      <Input name="dinas" label="Dinas Pendidikan" val={appData.dinas} onChange={handleChange} disabled={true} />
+                      <Input name="sekolah" label="Satuan Pendidikan" val={appData.sekolah} onChange={handleChange} disabled={true} />
+                      
+                      <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                          <Input name="tahun" label="Tahun Pelajaran" val={appData.tahun} onChange={handleChange} />
+                          <div>
+                            <label className="block text-xs font-bold text-blue-900 mb-1">Pilih Semester</label>
+                            <select 
+                              name="semester"
+                              value={appData.semester} 
+                              onChange={handleChange}
+                              className="w-full text-sm rounded-md border-blue-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-white font-medium text-blue-900"
+                            >
+                              <option value="1 (Ganjil)">1 (Ganjil)</option>
+                              <option value="2 (Genap)">2 (Genap)</option>
+                            </select>
+                          </div>
+                          <Input name="fase" label="Fase / Kelas" val={appData.fase} onChange={handleChange} />
+                          <Input name="alokasiWaktu" label="Alokasi Waktu (1 Semester)" val={appData.alokasiWaktu} onChange={handleChange} />
+                      </div>
 
-        {activeTab !== 'identitas' && activeTab !== 'modul' && (
-          <div className="max-w-4xl mx-auto text-center">
-            {errorMsg && <div className="bg-red-100 text-red-900 p-3 mb-4 rounded">{errorMsg}</div>}
-            {progressMsg && <div className="bg-blue-100 text-blue-900 p-3 mb-4 rounded">{progressMsg}</div>}
-            {generatedDocs[activeTab] ? (
-              <div>
-                <div className="bg-white p-10 shadow mb-4" dangerouslySetInnerHTML={{ __html: generatedDocs[activeTab] }} />
-                <button onClick={handleDownloadWord} className="px-6 py-3 bg-blue-700 text-white font-bold rounded shadow">Download Word (.doc)</button>
+                      <Input name="mapel" label="Mata Pelajaran" val={appData.mapel} onChange={handleChange} />
+                      <Input name="singkatan" label="Singkatan Mapel (Mis: BI)" val={appData.singkatan} onChange={handleChange} />
+                      <Input name="jpMinggu" label="JP per Minggu" val={appData.jpMinggu} onChange={handleChange} />
+                      <Input name="jpPertemuan" label="Durasi 1x Pertemuan" val={appData.jpPertemuan} onChange={handleChange} placeholder="Contoh: 2 JP (80 Menit)" />
+                      <Input name="guru" label="Nama Guru" val={appData.guru} onChange={handleChange} />
+                      <Input name="nipGuru" label="NIP Guru" val={appData.nipGuru} onChange={handleChange} />
+                      <Input name="kepsek" label="Nama Kepsek" val={appData.kepsek} onChange={handleChange} disabled={true} />
+                      <Input name="nipKepsek" label="NIP Kepsek" val={appData.nipKepsek} onChange={handleChange} disabled={true} />
+                      <Input name="kotaTanggal" label="Kota, Tanggal TTD" val={appData.kotaTanggal} onChange={handleChange} />
+                   </div>
+                </section>
+
+                <section>
+                   <h4 className="font-semibold text-blue-900 border-b border-slate-200 pb-2 mb-4">Blok 2 & 3: Capaian & Elemen</h4>
+                   <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Daftar Elemen & Kode</label>
+                        <textarea name="elemenList" rows={3} value={appData.elemenList} onChange={handleChange} className="w-full text-sm rounded-md border-slate-300 border p-2 bg-slate-50" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">CP Umum / Rasional Mapel</label>
+                        <textarea name="cpUmum" rows={3} value={appData.cpUmum} onChange={handleChange} className="w-full text-sm rounded-md border-slate-300 border p-2" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Capaian Pembelajaran (CP) Per Elemen</label>
+                        <textarea name="cpElemen" rows={5} value={appData.cpElemen} onChange={handleChange} className="w-full text-sm rounded-md border-slate-300 border p-2" />
+                      </div>
+                   </div>
+                </section>
+
+                <section>
+                   <h4 className="font-semibold text-blue-900 border-b border-slate-200 pb-2 mb-4">Blok 4: Kalender Pendidikan & KKTP</h4>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                         <label className="block text-sm font-medium text-slate-700 mb-1">Kalender Pendidikan Semester {appData.semester}</label>
+                         <textarea name="kalender" rows={6} value={appData.kalender} onChange={handleChange} className="w-full text-sm font-mono rounded-md border-slate-300 border p-2 bg-slate-50" placeholder="Masukkan rincian bulan khusus untuk semester ini..." />
+                      </div>
+                      <div>
+                         <label className="block text-sm font-medium text-slate-700 mb-1">Rentang Nilai & Predikat KKTP</label>
+                         <textarea name="rentangNilai" rows={6} value={appData.rentangNilai} onChange={handleChange} className="w-full text-sm font-mono rounded-md border-slate-300 border p-2 bg-slate-50" />
+                      </div>
+                   </div>
+                </section>
               </div>
-            ) : (
-              <div className="bg-white p-10 shadow rounded">
-                <h3 className="text-xl font-bold mb-4">Dokumen Belum Dibuat</h3>
-                <button onClick={() => handleGenerateSingle(activeTab)} disabled={isGenerating} className="px-8 py-3 bg-blue-600 text-white font-bold rounded">{isGenerating ? 'Memproses...' : 'Mulai Generate'}</button>
+              
+              <div className="p-6 border-t border-slate-100 bg-slate-50/90 rounded-b-xl text-center backdrop-blur-sm text-slate-600 text-sm">
+                💡 <span className="font-semibold">Info:</span> Pengaturan ini sekarang dikhususkan untuk <strong>1 Semester</strong>. Buka tab dokumen di sebelah kiri (CP, TP, ATP dst) untuk meng-generate dokumen satu per satu secara berurutan.
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+
+          {/* TAB 8: MODUL AJAR (CHUNKING INTERACTION) */}
+          {activeTab === 'modul' && (
+             <div className="w-full flex flex-col flex-1 items-center print:hidden no-print">
+               
+               <div className="w-full max-w-5xl bg-white border border-slate-200 rounded-xl shadow-sm mb-6 p-6 flex-shrink-0">
+                 <div className="flex items-center space-x-2 mb-2">
+                   <BookOpen className="h-6 w-6 text-green-700" />
+                   <h3 className="font-bold text-slate-800 text-lg">Generate Modul Ajar Sesi (Maksimal 2 Pertemuan Per Modul)</h3>
+                 </div>
+                 <p className="text-sm text-slate-500 mb-6">
+                   Sistem secara otomatis mengelompokkan TP yang memiliki lebih dari 2 pertemuan ke dalam modul-modul terpisah (maksimal 2 pertemuan per modul) sesuai dengan standardisasi Kurikulum Merdeka agar deskripsi pembelajaran tergenerate lengkap.
+                 </p>
+                 
+                 {extractedTPs.length === 0 ? (
+                    <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-md text-sm flex items-start space-x-3 mb-6">
+                       <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                       <p><strong>Perhatian:</strong> Anda belum melakukan Generate ATP atau tabel ATP kosong. Silakan masuk ke tab <strong>Alur (ATP)</strong> dan generate terlebih dahulu agar pilihan sesi TP otomatis tersinkronisasi di sini.</p>
+                    </div>
+                 ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                       <div className="md:col-span-2">
+                          <label className="block text-sm font-bold text-blue-900 mb-2">Pilih Sesi Pembelajaran / Sesi Modul</label>
+                          <select 
+                            value={selectedTPIndex} 
+                            onChange={(e) => setSelectedTPIndex(Number(e.target.value))}
+                            className="w-full text-sm rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border bg-slate-50 font-medium text-slate-700"
+                          >
+                            {extractedTPs.map((tp, idx) => (
+                               <option key={idx} value={idx}>
+                                  {tp.displayTitle}
+                               </option>
+                            ))}
+                          </select>
+                       </div>
+                       
+                       <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Materi Pokok (Otomatis)</label>
+                          <div className="w-full text-sm rounded-md border border-slate-200 p-3 bg-gray-100 text-slate-700 min-h-[46px] font-semibold">
+                             {extractedTPs[selectedTPIndex]?.materi}
+                          </div>
+                       </div>
+                       
+                       <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Durasi Sesi Ini (Otomatis)</label>
+                          <div className="w-full text-sm rounded-md border border-slate-200 p-3 bg-gray-100 text-slate-700 min-h-[46px] flex items-center space-x-2">
+                             <Calendar className="w-4 h-4 text-blue-600" />
+                             <span>{extractedTPs[selectedTPIndex]?.pertemuanCount} Pertemuan (Pertemuan {extractedTPs[selectedTPIndex]?.startMeeting} - {extractedTPs[selectedTPIndex]?.endMeeting})</span>
+                          </div>
+                       </div>
+
+                       <div className="md:col-span-2 mt-2">
+                          <label className="block text-sm font-bold text-slate-700 mb-2">Model Pembelajaran</label>
+                          <select 
+                            name="modelPembelajaran"
+                            value={appData.modelPembelajaran} 
+                            onChange={handleChange}
+                            className="w-full text-sm rounded-md border-slate-300 shadow-sm focus:border-blue-500 p-3 border bg-white"
+                          >
+                            <option value="Problem Based Learning (PBL)">Problem Based Learning (PBL)</option>
+                            <option value="Project Based Learning (PjBL)">Project Based Learning (PjBL)</option>
+                            <option value="Discovery Learning">Discovery Learning</option>
+                            <option value="Inquiry Learning">Inquiry Learning</option>
+                            <option value="Cooperative Learning">Cooperative Learning</option>
+                          </select>
+                       </div>
+                    </div>
+                 )}
+
+                 <div className="mt-8 flex flex-col items-center border-t border-slate-100 pt-6">
+                    {progressMsg && (
+                      <div className="w-full mb-4 px-4 py-3 bg-blue-100 text-blue-900 rounded-md text-sm font-medium flex items-center justify-center space-x-2 animate-pulse">
+                         <Loader2 className="animate-spin h-5 w-5" /><span>{progressMsg}</span>
+                      </div>
+                    )}
+                    {errorMsg && (
+                      <div className="w-full mb-4 px-4 py-3 bg-red-100 text-red-900 rounded-md text-sm font-medium flex items-center justify-center space-x-2">
+                         <AlertCircle className="h-5 w-5" /><span>{errorMsg}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col sm:flex-row w-full justify-center gap-3">
+                       <button 
+                         onClick={() => handleGenerateModul(selectedTPIndex)} 
+                         disabled={isGenerating || extractedTPs.length === 0} 
+                         className="flex-1 flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-bold text-white bg-green-700 hover:bg-green-800 disabled:bg-slate-400 transition-colors"
+                       >
+                         {isGenerating ? 'Memproses...' : `Generate Modul Sesi Ini`}
+                       </button>
+                       <button 
+                         onClick={handleGenerateSemuaModul} 
+                         disabled={isGenerating || extractedTPs.length === 0} 
+                         className="flex-1 flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-bold text-white bg-blue-700 hover:bg-blue-800 disabled:bg-slate-400 transition-colors"
+                       >
+                         {isGenerating ? 'Memproses...' : `Generate SEMUA Modul Sesi`}
+                       </button>
+                    </div>
+                 </div>
+               </div>
+               
+               {Object.keys(generatedModuls).length > 0 && (
+                 <div className="w-full flex-1 flex flex-col bg-[#525659] print-container relative rounded-xl border border-slate-300 pt-8 pb-8 shadow-inner">
+                    
+                    {extractedTPs.map((tp) => generatedModuls[tp.id] ? (
+                       <div key={tp.id} className="document-preview bg-white mx-auto shadow-2xl p-10 lg:p-14 text-black shrink-0 mb-8 relative"
+                          style={{ width: '100%', maxWidth: '210mm', minHeight: '297mm' }}
+                       >
+                          <div className="absolute top-0 left-0 bg-blue-900 text-white px-4 py-1 text-xs font-bold rounded-br-lg print:hidden no-print">
+                             MODUL: {tp.kode} (Pertemuan {tp.startMeeting}-{tp.endMeeting})
+                          </div>
+                          <div dangerouslySetInnerHTML={{ __html: generatedModuls[tp.id] }} />
+                       </div>
+                    ) : null)}
+
+                    <div ref={modulPreviewRef} className="h-4 w-full shrink-0"></div>
+
+                    <div className="w-full flex flex-wrap justify-center gap-4 pb-8 pt-4 print:hidden no-print shrink-0">
+                      <button onClick={handleDownloadWord} className="inline-flex items-center space-x-2 px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-md text-white bg-blue-700 hover:bg-blue-800 transition-colors">
+                        <Download className="h-5 w-5" /><span>Download Word (.doc)</span>
+                      </button>
+                      <button onClick={handleDownloadHTML} className="inline-flex items-center space-x-2 px-6 py-3 border border-slate-300 shadow-sm text-base font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+                        <Code className="h-5 w-5" /><span>Source HTML</span>
+                      </button>
+                      <button onClick={handlePrintHTML} className="inline-flex items-center space-x-2 px-6 py-3 border border-slate-300 shadow-sm text-base font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+                        <Printer className="h-5 w-5" /><span>Cetak / PDF</span>
+                      </button>
+                    </div>
+                 </div>
+               )}
+             </div>
+          )}
+
+          {/* TAB 2-7: DOCUMENT VIEWER FOR SHEETS */}
+          {activeTab !== 'identitas' && activeTab !== 'modul' && (
+            <div className="flex-1 w-full flex flex-col items-center">
+              
+              {errorMsg && (
+                 <div className="w-full max-w-2xl mb-6 px-4 py-3 bg-red-100 text-red-900 rounded-md text-sm font-medium flex items-center justify-center space-x-2 border border-red-200">
+                    <AlertCircle className="h-5 w-5 shrink-0" /><span>{errorMsg}</span>
+                 </div>
+              )}
+              {progressMsg && (
+                 <div className="w-full max-w-2xl mb-6 px-4 py-3 bg-blue-100 text-blue-900 rounded-md text-sm font-medium flex items-center justify-center space-x-2 border border-blue-200 shadow-sm animate-pulse">
+                    <Loader2 className="h-5 w-5 animate-spin shrink-0" /><span>{progressMsg}</span>
+                 </div>
+              )}
+
+              {generatedDocs[activeTab] ? (
+                // IF DOCUMENT HAS BEEN GENERATED
+                <div className="w-full flex-1 bg-[#525659] print:bg-white print-container relative flex flex-col pt-8 pb-8 rounded-xl shadow-inner border border-slate-300">
+                  
+                  <div 
+                    className="document-preview bg-white mx-auto shadow-2xl p-10 lg:p-14 text-black shrink-0 mb-4 print:mt-0 print:mb-0 print:p-0 relative"
+                    style={{ 
+                       width: '100%', 
+                       maxWidth: ['prosem', 'atp', 'kktp'].includes(activeTab) ? '297mm' : '210mm',
+                       minHeight: ['prosem', 'atp', 'kktp'].includes(activeTab) ? '210mm' : '297mm'
+                    }}
+                  >
+                     <div className="absolute top-0 left-0 bg-green-600 text-white px-4 py-1 text-xs font-bold rounded-br-lg print:hidden no-print flex items-center space-x-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Selesai Dibuat</span>
+                     </div>
+                     <div dangerouslySetInnerHTML={{ __html: generatedDocs[activeTab] }} />
+                  </div>
+                  
+                  <div className="w-full flex flex-wrap justify-center gap-4 pb-8 pt-4 print:hidden no-print shrink-0">
+                    <button onClick={handleDownloadWord} className="inline-flex items-center space-x-2 px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-md text-white bg-blue-700 hover:bg-blue-800 transition-colors">
+                      <Download className="h-5 w-5" /><span>Download Word (.doc)</span>
+                    </button>
+                    <button onClick={handlePrintHTML} className="inline-flex items-center space-x-2 px-6 py-3 border border-slate-300 shadow-sm text-base font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+                      <Printer className="h-5 w-5" /><span>Cetak / PDF</span>
+                    </button>
+                    
+                    <button 
+                       onClick={() => handleGenerateSingle(activeTab)}
+                       disabled={isGenerating}
+                       className="inline-flex items-center space-x-2 px-6 py-3 border border-slate-300 shadow-sm text-base font-medium rounded-md text-slate-700 bg-amber-50 hover:bg-amber-100 hover:text-amber-900 hover:border-amber-300 transition-colors ml-4 disabled:opacity-50"
+                    >
+                      <RefreshCw className={`h-5 w-5 ${isGenerating ? 'animate-spin' : ''}`} />
+                      <span>Buat Ulang (Regenerate)</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // IF DOCUMENT HAS NOT BEEN GENERATED YET
+                <div className="flex-1 flex flex-col items-center justify-center print:hidden p-8 w-full max-w-2xl mx-auto">
+                  <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-10 text-center w-full">
+                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <FileText className="h-10 w-10 text-blue-500" />
+                     </div>
+                     <h3 className="text-2xl font-bold text-slate-800 mb-2">Dokumen {docNames[activeTab]}</h3>
+                     <p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
+                        Dokumen ini belum di-generate untuk Semester {appData.semester}. Klik tombol di bawah ini untuk memulai AI menyusun dokumen berdasarkan referensi yang Anda berikan.
+                     </p>
+                     
+                     <button 
+                       onClick={() => handleGenerateSingle(activeTab)} 
+                       disabled={isGenerating}
+                       className="w-full md:w-auto inline-flex justify-center items-center px-8 py-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 transition-all transform hover:scale-105 active:scale-95"
+                     >
+                       {isGenerating ? (
+                         <>
+                           <Loader2 className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" />
+                           Sedang Memproses...
+                         </>
+                       ) : (
+                         `Mulai Generate ${docNames[activeTab]}`
+                       )}
+                     </button>
+                     
+                     <p className="text-xs text-slate-400 mt-6 flex items-center justify-center">
+                        <AlertCircle className="w-3 h-3 mr-1" /> Waktu proses bergantung pada koneksi internet (sekitar 10-30 detik).
+                     </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </main>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .document-preview table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; border: 1pt solid black; }
+        .document-preview th, .document-preview td { border: 1pt solid black; padding: 0.6rem; text-align: left; vertical-align: top; }
+        .document-preview th { background-color: #1a3a5c !important; color: white !important; font-weight: bold; }
+        .document-preview h1, .document-preview h2, .document-preview h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1a3a5c; }
+        .document-preview p { margin-bottom: 0.5rem; }
+        .document-preview .header-kop { text-align: center; border-bottom: 3px solid black; padding-bottom: 1rem; margin-bottom: 2rem; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.4); }
+        
+        @media print {
+          @page { 
+            size: A4 ${['prosem', 'atp', 'kktp'].includes(activeTab) ? 'landscape' : 'portrait'}; 
+            margin: 1.5cm; 
+          }
+          body { background: white; }
+          #root > div > aside { display: none !important; }
+          #root > div > main > header { display: none !important; }
+          
+          .print-container { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; padding: 0 !important; margin: 0 !important; background: white !important; border: none !important; box-shadow: none !important;}
+          .document-preview { box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; border: none !important; }
+          .no-print { display: none !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+      `}} />
     </div>
   );
 }
 
+// Utility Input Component
 function Input({ name, label, val, onChange, placeholder, disabled }) {
   return (
     <div>
       <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
-      <input type="text" name={name} value={val} onChange={onChange} placeholder={placeholder} disabled={disabled} className={`w-full text-sm rounded-md border-slate-300 shadow-sm p-2 border ${disabled ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-white'}`} />
+      <input 
+        type="text" 
+        name={name} 
+        value={val} 
+        onChange={onChange} 
+        placeholder={placeholder}
+        disabled={disabled}
+        className={`w-full text-sm rounded-md border-slate-300 shadow-sm p-2 border ${
+          disabled 
+            ? 'bg-slate-100 text-slate-500 cursor-not-allowed focus:ring-0 focus:border-slate-300' 
+            : 'bg-white focus:border-blue-500 focus:ring-blue-500'
+        }`} 
+      />
     </div>
   );
 }
