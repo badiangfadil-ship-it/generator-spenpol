@@ -193,15 +193,18 @@ ${getCommonRules(d)}
 `;
 
 const getPromptModul = (d, tpObj) => `
-Anda adalah seorang Ahli Kurikulum Merdeka dan praktisi pendidikan profesional yang merancang **Rencana Pembelajaran Mendalam (RPM)** atau Modul Ajar Deep Learning yang komprehensif, rapi, dan siap cetak.
+Anda adalah seorang Ahli Kurikulum Merdeka dan praktisi pendidikan profesional yang merancang **Rencana Pembelajaran Mendalam (RPM)** atau Modul Ajar Deep Learning yang KOMPREHENSIF, DETAIL, RAPI, dan SIAP CETAK — setara kualitas dengan dokumen RPM resmi yang dibuat oleh guru berpengalaman.
 
-Buat dokumen MODUL AJAR / RPM yang lengkap secara mendalam TANPA MENGURANGI ATAU MERINGKAS komponen apa pun, mengikuti persis struktur, tata letak teks, dan sub-bagian seperti format standar di bawah ini:
+ATURAN PANJANG DOKUMEN (WAJIB DIPATUHI):
+- JANGAN membatasi panjang dokumen pada jumlah halaman tertentu (misalnya 5 halaman). Panjang dokumen HARUS mengikuti kebutuhan riil: semakin banyak jumlah pertemuan (pertemuanCount = ${tpObj.pertemuanCount}), semakin banyak & detail pula uraian Kegiatan Awal, Kegiatan Inti, Kegiatan Penutup, serta rincian per pertemuan yang harus dihasilkan.
+- SETIAP pertemuan (Pertemuan 1 sampai Pertemuan ${tpObj.pertemuanCount}) WAJIB memiliki uraiannya sendiri secara terpisah dan lengkap di setiap bagian yang relevan (Tujuan Pembelajaran per pertemuan, Topik per pertemuan, Model & Sintaks per pertemuan, Metode per pertemuan, Kegiatan Awal per pertemuan, Kegiatan Inti per pertemuan dengan sub-tahap Memahami/Mengaplikasikan/Merefleksi, Kegiatan Penutup per pertemuan). JANGAN merangkum atau menggabungkan beberapa pertemuan menjadi satu uraian singkat.
+- TANPA MENGURANGI ATAU MERINGKAS komponen apa pun dari struktur di bawah ini. Setiap sub-bagian harus diisi dengan konten yang kontekstual, konkret, dan spesifik terhadap materi "${tpObj.materi}" (bukan kalimat generik kosong).
 
 Mata Pelajaran: ${d.mapel}
 Bab / Topik: ${tpObj.materi}
 Fase / Kelas / Semester: ${d.fase} / ${d.semester}
 Tujuan Pembelajaran Sesi Ini: [${tpObj.kode}] ${tpObj.tujuan}
-Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} Pertemuan)
+Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} Pertemuan, @80 menit per pertemuan)
 Model Pembelajaran: ${d.modelPembelajaran}
 Nama Penyusun: ${d.guru}
 Nama Sekolah: ${d.sekolah}
@@ -209,7 +212,7 @@ Kota & Tanggal: ${d.kotaTanggal}
 Kepala Sekolah: ${d.kepsek} (NIP. ${d.nipKepsek})
 Guru Mapel: ${d.guru} (NIP. ${d.nipGuru})
 
-STRUKTUR FORMAT DOKUMEN HTML WAJIB (Gunakan tag HTML dan tabel border rapi):
+STRUKTUR FORMAT DOKUMEN HTML WAJIB (Gunakan tag HTML dan tabel border rapi, ikuti persis struktur, tata letak, dan urutan sub-bagian di bawah ini):
 
 <h2 style="text-align: center; color: #1a3a5c; text-transform: uppercase;">RENCANA PEMBELAJARAN MENDALAM (RPM)</h2>
 
@@ -243,14 +246,14 @@ STRUKTUR FORMAT DOKUMEN HTML WAJIB (Gunakan tag HTML dan tabel border rapi):
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">B. Identifikasi</h4>
 <p><strong>Identifikasi Murid:</strong><br>
-Murid memiliki pengetahuan awal terkait konsep dasar dari pembelajaran sebelumnya, namun memerlukan penguatan dalam menghubungkannya ke dalam konteks nyata. Minat belajar murid tinggi terhadap topik yang dekat dengan kehidupan sehari-hari (seperti jual beli, proporsi, atau aplikasi teknologi), dengan kebutuhan belajar yang mencakup penguatan analisis bagi kemampuan rendah serta tantangan pemecahan masalah bagi yang berprestasi.</p>
+Uraikan secara spesifik: pengetahuan awal (prasyarat) yang relevan dengan ${tpObj.materi}, minat belajar murid terhadap topik yang dekat dengan kehidupan sehari-hari yang relevan dengan materi ini, serta kebutuhan belajar yang beragam (penguatan analisis bagi murid berkemampuan rendah dan tantangan pemecahan masalah bagi murid berprestasi). Tulis 1 paragraf utuh yang kontekstual terhadap ${tpObj.materi}, bukan kalimat generik.</p>
 <p><strong>Materi Pelajaran:</strong><br>
-- <em>Faktual:</em> Pengertian dasar, notasi, dan istilah penting terkait ${tpObj.materi}.<br>
-- <em>Konseptual:</em> Hubungan antar unsur, prinsip proporsionalitas, skala, dan laju perubahan dalam kehidupan sehari-hari.<br>
-- <em>Prosedural:</em> Langkah-langkah sistematis dalam menyederhanakan, menghitung, dan menyelesaikan masalah menggunakan operasi aritmetika.<br>
-- <em>Metakognitif:</em> Refleksi murid mengenai bagaimana konsep ini membantu pengambilan keputusan dalam situasi nyata.</p>
+- <em>Faktual:</em> [uraikan pengertian dasar, notasi, dan istilah penting yang SPESIFIK untuk materi ${tpObj.materi}]<br>
+- <em>Konseptual:</em> [uraikan hubungan antar konsep, prinsip, dan keterkaitan dalam kehidupan sehari-hari yang SPESIFIK untuk materi ${tpObj.materi}]<br>
+- <em>Prosedural:</em> [uraikan langkah-langkah sistematis / prosedur penyelesaian masalah yang SPESIFIK untuk materi ${tpObj.materi}]<br>
+- <em>Metakognitif:</em> [uraikan bagaimana murid merefleksikan dan mengevaluasi pemahamannya sendiri terhadap ${tpObj.materi}]</p>
 <p><strong>Dimensi Profil Lulusan:</strong><br>
-Penalaran kritis (murid mampu menganalisis dan menyelesaikan masalah secara logis dan terstruktur).</p>
+[Sebutkan 1-2 dimensi Profil Lulusan yang paling relevan (misalnya Penalaran Kritis, Kreativitas, Kolaborasi, dsb.) beserta penjelasan singkat kaitannya dengan ${tpObj.materi}.]</p>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">C. Desain Pembelajaran</h4>
 <p><strong>Capaian Pembelajaran:</strong><br>
@@ -258,56 +261,102 @@ ${d.cpUmum}</p>
 <p><strong>Tujuan Pembelajaran:</strong><br>
 [${tpObj.kode}] ${tpObj.tujuan}</p>
 <p><strong>Lintas Disiplin Ilmu:</strong><br>
-Integrasi dengan literasi finansial (ekonomi rumah tangga/keuangan) dan ilmu pengetahuan alam untuk memperkaya pemahaman dalam konteks interdisipliner.</p>
-<p><strong>Tujuan Pembelajaran (Rincian per pertemuan):</strong><br>
-${Array.from({ length: tpObj.pertemuanCount }).map((_, i) => `
-- Pertemuan ${i + 1} (80 menit): Peserta didik mendalami dan menerapkan konsep dasar hingga menganalisis aplikasi materi ${tpObj.materi} melalui soal kontekstual dengan ketepatan minimal 80%.
-`).join('')}</p>
+[Uraikan integrasi materi ${tpObj.materi} dengan disiplin ilmu lain yang relevan (misalnya literasi finansial, IPA, seni, dsb.) untuk memperkaya konteks interdisipliner.]</p>
+<p><strong>Tujuan Pembelajaran (rincian kompetensi per pertemuan):</strong><br>
+Buat SATU baris tersendiri untuk SETIAP pertemuan dari Pertemuan 1 sampai Pertemuan ${tpObj.pertemuanCount} (jangan digabung). Untuk setiap pertemuan, uraikan level kompetensi (mengingat/memahami/menerapkan/menganalisis/mengevaluasi/mencipta sesuai tahapannya), sub-topik spesifik yang dipelajari pada pertemuan tersebut, dan target ketepatan/kriteria keberhasilan. Format tiap baris:<br>
+- <strong>Pertemuan [n] (80 menit):</strong> [uraian lengkap sesuai penjelasan di atas]</p>
 <p><strong>Topik Pembelajaran:</strong><br>
-${Array.from({ length: tpObj.pertemuanCount }).map((_, i) => `
-- Pertemuan ${i + 1}: Eksplorasi konsep, notasi, dan aplikasi pemecahan masalah kontekstual bagian ${i + 1}.
-`).join('')}</p>
+Buat SATU baris tersendiri untuk SETIAP pertemuan dari Pertemuan 1 sampai Pertemuan ${tpObj.pertemuanCount}, berisi sub-topik spesifik yang dibahas pada pertemuan tersebut (bukan pengulangan kalimat yang sama). Format tiap baris:<br>
+- <strong>Pertemuan [n]:</strong> [sub-topik spesifik pertemuan ini]</p>
 <p><strong>Praktik Pedagogis:</strong><br>
-Pendekatan Pembelajaran Mendalam (Deep Learning) berbasis inkuiri terbimbing dan Problem-Based Learning (PBL) untuk mendalami konsep secara bermakna (Mindful, Meaningful, Joyful Learning).</p>
+<em>Pendekatan Pembelajaran Mendalam (Deep Learning):</em> [uraikan pendekatan inkuiri/berbasis masalah yang mendasari seluruh rangkaian pertemuan, menekankan Mindful, Meaningful, Joyful Learning.]<br><br>
+<strong>Model (per pertemuan):</strong><br>
+Untuk SETIAP pertemuan (Pertemuan 1 s.d. Pertemuan ${tpObj.pertemuanCount}), tentukan nama model pembelajaran yang dipakai (boleh bervariasi antar pertemuan, mengacu pada ${d.modelPembelajaran} atau model lain yang relevan seperti Inkuiri Terbimbing, Problem-Based Learning, Project-Based Learning, Discovery Learning) beserta SINTAKSNYA (tahapan bernomor). Format tiap pertemuan:<br>
+<strong>Pertemuan [n]:</strong> [Nama Model]. <strong>Sintaks:</strong> (1) ...; (2) ...; (3) ...; (4) ...<br><br>
+<strong>Metode (per pertemuan):</strong><br>
+Untuk SETIAP pertemuan, sebutkan metode pembelajaran konkret yang digunakan (ceramah interaktif, diskusi kelompok, tanya jawab, demonstrasi, presentasi, dsb.). Format tiap pertemuan:<br>
+<strong>Pertemuan [n]:</strong> [metode-metode yang dipakai]</p>
 <p><strong>Kemitraan Pembelajaran:</strong><br>
-Keterlibatan lingkungan sekitar dan tugas pengamatan sederhana di rumah untuk memperkuat koneksi sekolah dengan kehidupan nyata.</p>
-<p><strong>Lingkungan Pembelajaran & Pemanfaatan Digital:</strong><br>
-Pengaturan ruang kelas kolaboratif, pemanfaatan presentasi digital (PowerPoint/Canva), video pembelajaran interaktif, serta lembar kerja digital/cetak.</p>
+[Uraikan keterlibatan orang tua/lingkungan sekitar melalui tugas rumah atau pengamatan sederhana yang relevan dengan ${tpObj.materi}, untuk memperkuat koneksi sekolah-rumah.]</p>
+<p><strong>Lingkungan Pembelajaran:</strong><br>
+[Uraikan pengaturan ruang kelas/kolaboratif yang mendukung pembelajaran materi ini.]</p>
+<p><strong>Pemanfaatan Digital:</strong><br>
+[Sebutkan dalam bentuk daftar (list) alat/media digital konkret yang digunakan: presentasi digital (PowerPoint/Canva), video pembelajaran, sumber belajar daring, lembar kerja digital/cetak, dsb., yang relevan dengan ${tpObj.materi}.]</p>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">D. Pengalaman Belajar</h4>
-<p><strong>Kegiatan Awal (15 menit per pertemuan):</strong><br>
-Prinsip Bermakna dan Menggembirakan (mengaitkan apersepsi dengan pengalaman sehari-hari, absensi, doa bersama, serta penyampaian motivasi belajar).</p>
-<p><strong>Kegiatan Inti (55 menit per pertemuan):</strong><br>
-- <em>Memahami (20 menit):</em> Eksplorasi materi melalui stimulus visual/kontekstual, diskusi kelompok kecil memahami definisi dan notasi.<br>
-- <em>Mengaplikasikan (25 menit):</em> Kerja kelompok menyelesaikan LKPD dan latihan soal terstruktur dengan bimbingan guru.<br>
-- <em>Merefleksi (10 menit):</em> Penulisan jurnal refleksi singkat, kesimpulan bersama, dan penguatan positif.</p>
-<p><strong>Kegiatan Penutup (10 menit per pertemuan):</strong><br>
-Penyimpulan materi bersama, umpan balik positif atas partisipasi murid, penjelasan tindak lanjut/tugas rumah, serta doa dan salam penutup.</p>
+Untuk bagian ini, WAJIB membuat uraian TERPISAH dan LENGKAP untuk SETIAP pertemuan dari Pertemuan 1 sampai Pertemuan ${tpObj.pertemuanCount}. Jangan menggabungkan pertemuan-pertemuan menjadi satu paragraf ringkas. Ikuti format berikut secara berulang untuk setiap pertemuan:
+
+<p><strong>Kegiatan Awal (15 menit per pertemuan) — Prinsip: Bermakna dan Menggembirakan</strong><br>
+Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]:</strong>" diikuti daftar bernomor (list) berisi langkah-langkah kegiatan awal beserta alokasi menitnya (salam & doa, presensi, apersepsi yang menghubungkan dengan pengalaman sehari-hari terkait ${tpObj.materi}, dan motivasi belajar). Apersepsi dan motivasi HARUS spesifik/kontekstual dan BERBEDA pada setiap pertemuan, bukan pengulangan kalimat yang sama.</p>
+
+<p><strong>Kegiatan Inti (55 menit per pertemuan) — Prinsip: Berkesadaran, Bermakna, Menggembirakan</strong><br>
+Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]: Topik - [sub-topik pertemuan ini]</strong>" diikuti daftar bernomor berisi 3 tahap dengan alokasi menit dan uraian konkret yang kontekstual terhadap sub-topik pertemuan tersebut (bukan generik):<br>
+1. <strong>Memahami (20 menit):</strong> [uraian kegiatan eksplorasi/orientasi masalah yang spesifik, sebutkan aktivitas guru & murid, kaitkan dengan sintaks model pada pertemuan ini]<br>
+2. <strong>Mengaplikasikan (25 menit):</strong> [uraian kerja kelompok/LKPD/latihan soal yang spesifik dengan contoh kontekstual konkret terkait sub-topik pertemuan ini]<br>
+3. <strong>Merefleksi (10 menit):</strong> [uraian jurnal refleksi/diskusi singkat yang spesifik]</p>
+
+<p><strong>Kegiatan Penutup (10 menit per pertemuan) — Prinsip: Bermakna dan Berkesadaran</strong><br>
+Untuk SETIAP pertemuan, buat sub-judul "<strong>Pertemuan [n]:</strong>" diikuti daftar bernomor berisi langkah-langkah penutup beserta alokasi menit (kesimpulan bersama yang spesifik terhadap sub-topik pertemuan ini, umpan balik positif, tindak lanjut/tugas rumah, doa dan salam penutup).</p>
 
 <h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">E. Asesmen Pembelajaran</h4>
-<p><strong>Awal (Diagnostik):</strong> Kuis lisan cepat / tanya jawab pengetahuan prasyarat.<br>
-<strong>Proses (Formatif):</strong> Observasi keaktifan diskusi kelompok dan rubrik penilaian LKPD harian.<br>
-<strong>Akhir (Sumatif):</strong> Tes tertulis berupa soal uraian dan pilihan ganda kontekstual.</p>
+<p><strong>Awal (Diagnostik):</strong> Jenis: Diagnostik. Bentuk: [tentukan bentuk konkret, misalnya kuis lisan]. Teknik: [uraikan teknik pelaksanaan singkat, spesifik terhadap materi ${tpObj.materi}].<br>
+<strong>Proses (Formatif):</strong> Jenis: Formatif. Bentuk: [misalnya observasi dan rubrik]. Teknik: [uraikan teknik pencatatan selama diskusi/latihan kelompok].<br>
+<strong>Akhir (Sumatif):</strong> Jenis: Sumatif. Bentuk: [misalnya tes tertulis]. Teknik: [uraikan bentuk soal uraian/pilihan ganda kontekstual].</p>
+
+<table border="0" style="width: 100%; text-align: center; margin-top: 3rem; page-break-inside: avoid;">
+  <tr>
+    <td style="width: 50%; vertical-align: top;">
+      Menyetujui,<br>Kepala ${d.sekolah}<br><br><br><br>
+      <b><u>${d.kepsek}</u></b><br>NIP. ${d.nipKepsek}
+    </td>
+    <td style="width: 50%; vertical-align: top;">
+      ${d.kotaTanggal}<br>Guru Mata Pelajaran<br><br><br><br>
+      <b><u>${d.guru}</u></b><br>NIP. ${d.nipGuru}
+    </td>
+  </tr>
+</table>
 
 <div style="page-break-before: always;"></div>
-<h3 style="text-align: center; color: #1a3a5c;">LEMBAR LAMPIRAN PERANGKAT PEMBELAJARAN</h3>
+<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN</h3>
 
 <h4 style="color: #1a3a5c;">1. Asesmen Awal Pembelajaran</h4>
-<p>Soal asesmen diagnostik lisan untuk mengukur kesiapan belajar peserta didik terhadap prasyarat materi ${tpObj.materi}.</p>
+<p>Buat TEPAT 5 soal asesmen diagnostik (lisan/tertulis singkat) untuk mengukur kesiapan/pengetahuan prasyarat peserta didik terhadap materi ${tpObj.materi}. Setiap soal WAJIB disertai kunci jawaban singkat. Gunakan daftar bernomor (list) dengan format:<br>
+1. [Pertanyaan] (Jawaban: [jawaban singkat])<br>
+... dan seterusnya sampai 5 soal, dengan tingkat kesulitan bertahap dari yang paling dasar/prasyarat.</p>
 
-<h4 style="color: #1a3a5c;">2. Rubrik Penilaian (Skala 4)</h4>
+<h4 style="color: #1a3a5c;">2. Asesmen Proses Pembelajaran — Rubrik Penilaian Sikap (Skala 4)</h4>
 <ul style="margin-bottom: 15px;">
-  <li><strong>Skala 4 (Sangat Baik):</strong> Murid aktif, kolaboratif, memahami konsep secara utuh tanpa kesalahan.</li>
-  <li><strong>Skala 3 (Baik):</strong> Murid aktif berkontribusi, memahami dasar konsep dengan sedikit kesalahan kecil.</li>
-  <li><strong>Skala 2 (Cukup):</strong> Memahami pengertian umum namun masih kesulitan dalam prosedur aplikasi.</li>
-  <li><strong>Skala 1 (Kurang):</strong> Belum memahami konsep dasar dan memerlukan bimbingan intensif.</li>
+  <li><strong>Skala 4 (Sangat Baik):</strong> [deskripsi sikap sangat baik yang spesifik]</li>
+  <li><strong>Skala 3 (Baik):</strong> [deskripsi sikap baik yang spesifik]</li>
+  <li><strong>Skala 2 (Cukup):</strong> [deskripsi sikap cukup yang spesifik]</li>
+  <li><strong>Skala 1 (Kurang):</strong> [deskripsi sikap kurang yang spesifik]</li>
 </ul>
 
-<h4 style="color: #1a3a5c;">3. Asesmen Akhir Pembelajaran (Contoh Soal Sumatif)</h4>
-<p>5 Soal uraian/pilihan ganda kontekstual untuk mengukur pemahaman komprehensif peserta didik terhadap materi ${tpObj.materi}.</p>
+<h4 style="color: #1a3a5c;">3. Rubrik Penilaian Pengetahuan (Skala 4)</h4>
+<ul style="margin-bottom: 15px;">
+  <li><strong>Skala 4 (Sangat Baik):</strong> [pemahaman konsep ${tpObj.materi} tanpa kesalahan]</li>
+  <li><strong>Skala 3 (Baik):</strong> [pemahaman dasar dengan sedikit kesalahan kecil]</li>
+  <li><strong>Skala 2 (Cukup):</strong> [memahami pengertian umum namun kesulitan pada prosedur]</li>
+  <li><strong>Skala 1 (Kurang):</strong> [belum memahami konsep dasar, perlu bimbingan intensif]</li>
+</ul>
+
+<h4 style="color: #1a3a5c;">4. Rubrik Penilaian Keterampilan (Skala 4)</h4>
+<ul style="margin-bottom: 15px;">
+  <li><strong>Skala 4 (Sangat Baik):</strong> [mampu menerapkan konsep dalam kasus nyata secara akurat dan kreatif]</li>
+  <li><strong>Skala 3 (Baik):</strong> [menerapkan dengan benar namun kurang cepat/mandiri]</li>
+  <li><strong>Skala 2 (Cukup):</strong> [menerapkan dasar namun keliru pada konteks kompleks]</li>
+  <li><strong>Skala 1 (Kurang):</strong> [belum mampu menerapkan secara mandiri]</li>
+</ul>
+
+<h4 style="color: #1a3a5c;">5. Asesmen Akhir Pembelajaran (Soal Sumatif)</h4>
+<p>Buat TEPAT 5 soal uraian/essay kontekstual untuk mengukur pemahaman komprehensif peserta didik terhadap materi ${tpObj.materi}, dengan tingkat kesulitan meningkat (C2 s.d. C5). Setiap soal WAJIB disertai kunci jawaban/pembahasan singkat. Gunakan daftar bernomor (list) dengan format:<br>
+1. [Pertanyaan uraian] (Jawaban: [pembahasan singkat])<br>
+... dan seterusnya sampai 5 soal.</p>
 
 <div style="page-break-before: always;"></div>
 <h3 style="text-align: center; color: #1a3a5c;">LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
+
+<h4 style="color: #1a3a5c;">Identitas Diri</h4>
 <table style="width: 100%; border: none; margin-bottom: 15px;" border="0">
   <tr>
     <td style="border: none; padding: 4px;"><strong>Nama Peserta Didik:</strong> .................................................</td>
@@ -320,42 +369,36 @@ Penyimpulan materi bersama, umpan balik positif atas partisipasi murid, penjelas
 </table>
 
 <p><strong>Petunjuk Penggunaan LKPD:</strong><br>
-Baca setiap bagian dengan teliti, diskusikan bersama kelompokmu secara aktif dan berkesadaran, serta gunakan contoh nyata dalam kehidupan sehari-hari agar pembelajaran lebih bermakna!</p>
+Tulis petunjuk penggunaan yang ramah dan memotivasi murid (4 poin bernomor: apa yang harus dibaca/diamati, cara menjawab, alat yang dibutuhkan, dan tujuan pembelajaran LKPD ini), kontekstual terhadap ${tpObj.materi}.</p>
 
+<p><strong>Sintaks Pembelajaran dan Pengalaman Belajar Mendalam:</strong><br>
+[Satu paragraf pembuka yang menjelaskan alur belajar mendalam yang akan dilalui murid melalui LKPD ini: Memahami → Mengaplikasikan → Merefleksikan, dikaitkan dengan model pembelajaran tiap pertemuan.]</p>
+
+Untuk SETIAP pertemuan dari Pertemuan 1 sampai Pertemuan ${tpObj.pertemuanCount}, buat bagian LKPD tersendiri dengan format berikut (jangan digabung menjadi satu untuk semua pertemuan):
+
+<h4 style="color: #1a3a5c; margin-top: 15px;">Pertemuan [n]: [sub-topik pertemuan ini]</h4>
 <p><strong>A. Memahami (Orientasi Masalah)</strong><br>
-Amati dan pelajari konsep dasar materi ${tpObj.materi} melalui stimulus yang diberikan guru.<br>
-<em>Pertanyaan Pemahaman:</em><br>
-1. Tuliskan definisi dan notasi utama dari materi ini!<br>
+[Uraian singkat materi/stimulus visual/kasus kontekstual yang relevan dengan sub-topik pertemuan ini.]<br>
+<em>Pertanyaan Pemahaman</em> (buat minimal 2 pertanyaan spesifik terkait sub-topik pertemuan ini, masing-masing diikuti ruang jawab titik-titik):<br>
+1. [Pertanyaan]<br>
 <span style="color: #a0aec0; font-style: italic;">Jawab: .................................................................................................................................................</span></p>
 
-<p><strong>B. Mengaplikasikan (Eksplorasi & Diskusi Kelompok)</strong><br>
-Selesaikan studi kasus kontekstual berikut bersama kelompokmu secara teliti.<br>
-<em>Kasus Kontekstual:</em><br>
-<span style="color: #a0aec0; font-style: italic;">Tuliskan langkah-langkah penyelesaian dan hasil perhitungan kelompok di sini...</span></p>
+<p><strong>B. Mengaplikasikan (Kerja Kelompok/Studi Kasus)</strong><br>
+Buat 1-2 studi kasus kontekstual KONKRET (dengan angka/situasi nyata) yang relevan dengan sub-topik pertemuan ini, diikuti ruang jawab bertahap (Langkah 1, Langkah 2, Hasil) dengan titik-titik kosong untuk diisi murid.</p>
 
 <p><strong>C. Merefleksikan (Kesimpulan & Evaluasi)</strong><br>
-Bagaimana penerapan materi ${tpObj.materi} ini dalam membantu aktivitas kehidupan sehari-hari?<br>
+[1 pertanyaan refleksi spesifik terkait sub-topik pertemuan ini]<br>
 <span style="color: #a0aec0; font-style: italic;">Jawab: .................................................................................................................................................</span></p>
+
+Setelah seluruh bagian per pertemuan selesai, tutup LKPD dengan bagian berikut:
 
 <p><strong>Cek Pemahaman Diri (Lingkari pilihanmu):</strong><br>
 - Saya paham konsep dasar: Sangat / Ya / Cukup / Belum<br>
-- Saya bisa aplikasikan dalam kasus nyata: Sangat / Ya / Cukup / Belum</p>
+- Saya bisa aplikasikan dalam kasus nyata: Sangat / Ya / Cukup / Belum<br>
+- Saya siap tantangan selanjutnya: Sangat / Ya / Cukup / Belum</p>
 
 <h4 style="color: #1a3a5c; margin-top: 20px;">Catatan Guru:</h4>
 <div style="border: 1px dashed #cbd5e0; min-height: 60px; padding: 8px; margin-bottom: 30px; color: #a0aec0; font-style: italic;">Catatan evaluasi atau umpan balik guru untuk perkembangan belajar siswa...</div>
-
-<table border="0" style="width: 100%; text-align: center; margin-top: 3rem; page-break-inside: avoid;">
-  <tr>
-    <td style="width: 50%; vertical-align: top;">
-      Menyetujui,<br>Kepala ${d.sekolah}<br><br><br><br>
-      <b>${d.kepsek}</b><br>NIP. ${d.nipKepsek}
-    </td>
-    <td style="width: 50%; vertical-align: top;">
-      ${d.kotaTanggal}<br>Guru Mata Pelajaran<br><br><br><br>
-      <b>${d.guru}</b><br>NIP. ${d.nipGuru}
-    </td>
-  </tr>
-</table>
 
 ${getCommonRules(d)}
 `;
