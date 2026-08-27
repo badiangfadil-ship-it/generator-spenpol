@@ -193,134 +193,169 @@ ${getCommonRules(d)}
 `;
 
 const getPromptModul = (d, tpObj) => `
-Anda adalah seorang Ahli Kurikulum Merdeka yang merancang **Modul Ajar Deep Learning** berkualitas tinggi sesuai standar dokumen referensi resmi.
+Anda adalah seorang Ahli Kurikulum Merdeka dan praktisi pendidikan profesional yang merancang **Rencana Pembelajaran Mendalam (RPM)** atau Modul Ajar Deep Learning yang komprehensif, rapi, dan siap cetak.
 
-Buat dokumen MODUL AJAR yang komprehensif mengikuti format visual, tata letak, struktur hierarki, dan isi teks secara lengkap dan mendalam (JANGAN diringkas) persis seperti urutan di bawah ini:
+Buat dokumen MODUL AJAR / RPM yang lengkap secara mendalam TANPA MENGURANGI ATAU MERINGKAS komponen apa pun, mengikuti persis struktur, tata letak teks, dan sub-bagian seperti format standar di bawah ini:
 
 Mata Pelajaran: ${d.mapel}
 Bab / Topik: ${tpObj.materi}
 Fase / Kelas / Semester: ${d.fase} / ${d.semester}
 Tujuan Pembelajaran Sesi Ini: [${tpObj.kode}] ${tpObj.tujuan}
-Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} pertemuan)
+Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} Pertemuan)
 Model Pembelajaran: ${d.modelPembelajaran}
 Nama Penyusun: ${d.guru}
 Nama Sekolah: ${d.sekolah}
+Kota & Tanggal: ${d.kotaTanggal}
+Kepala Sekolah: ${d.kepsek} (NIP. ${d.nipKepsek})
+Guru Mapel: ${d.guru} (NIP. ${d.nipGuru})
 
-STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
+STRUKTUR FORMAT DOKUMEN HTML WAJIB (Gunakan tag HTML dan tabel border rapi):
 
-<h2 style="text-align: center; color: #1a3a5c;">MODUL AJAR DEEP LEARNING</h2>
-<h3 style="text-align: center; color: #1a3a5c; text-transform: uppercase;">MATA PELAJARAN : ${d.mapel.toUpperCase()}</h3>
-<h3 style="text-align: center; color: #1a3a5c; text-transform: uppercase; margin-bottom: 25px;">BAB / TOPIK : ${tpObj.materi.toUpperCase()}</h3>
+<h2 style="text-align: center; color: #1a3a5c; text-transform: uppercase;">RENCANA PEMBELAJARAN MENDALAM (RPM)</h2>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">A. IDENTITAS MODUL</h4>
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">A. Identitas</h4>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;" border="0">
   <tr>
-    <td style="width: 30%; font-weight: bold; padding: 6px; background-color: #f2f2f2;">Nama Sekolah</td>
-    <td style="padding: 6px;">${d.sekolah}</td>
+    <td style="width: 20%; font-weight: bold; padding: 4px;">Penyusun</td>
+    <td style="width: 30%; padding: 4px;">: ${d.guru}</td>
+    <td style="width: 20%; font-weight: bold; padding: 4px;">Semester</td>
+    <td style="width: 30%; padding: 4px;">: ${d.semester}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Nama Penyusun</td>
-    <td style="padding: 6px;">${d.guru}</td>
+    <td style="font-weight: bold; padding: 4px;">Sekolah</td>
+    <td style="padding: 4px;">: ${d.sekolah}</td>
+    <td style="font-weight: bold; padding: 4px;">Mata Pelajaran</td>
+    <td style="padding: 4px;">: ${d.mapel}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Mata Pelajaran</td>
-    <td style="padding: 6px;">${d.mapel}</td>
+    <td style="font-weight: bold; padding: 4px;">Tahun Pelajaran</td>
+    <td style="padding: 4px;">: ${d.tahun}</td>
+    <td style="font-weight: bold; padding: 4px;">Kelas/Fase Capaian</td>
+    <td style="padding: 4px;">: ${d.fase}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Kelas / Fase / Semester</td>
-    <td style="padding: 6px;">${d.fase.split('/')[1] || 'VII'} / ${d.fase.split('/')[0]} / ${d.semester}</td>
-  </tr>
-  <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Alokasi Waktu</td>
-    <td style="padding: 6px;">${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} kali pertemuan)</td>
-  </tr>
-  <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Tahun Pelajaran</td>
-    <td style="padding: 6px;">${d.tahun}</td>
+    <td style="font-weight: bold; padding: 4px;">Materi</td>
+    <td style="padding: 4px;">: ${tpObj.materi}</td>
+    <td style="font-weight: bold; padding: 4px;">Alokasi Waktu</td>
+    <td style="padding: 4px;">: ${tpObj.pertemuanCount * 2}x40 Menit (${tpObj.pertemuanCount} Pertemuan)</td>
   </tr>
 </table>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">B. IDENTIFIKASI KESIAPAN PESERTA DIDIK</h4>
-<ul style="margin-top: 5px; margin-bottom: 20px;">
-  <li><strong>Pengetahuan Awal:</strong> Peserta didik telah memahami konsep dasar prasyarat yang relevan dengan topik ${tpObj.materi}.</li>
-  <li><strong>Minat:</strong> Peserta didik memiliki minat yang beragam terhadap teknologi, sains, dan aplikasi nyata dalam kehidupan.</li>
-  <li><strong>Latar Belakang:</strong> Peserta didik berasal dari latar belakang sosial budaya beragam dengan tingkat pemahaman bervariasi.</li>
-  <li><strong>Kebutuhan Belajar:</strong><br>
-    - <em>Visual:</em> Membutuhkan diagram, peta konsep, dan tayangan visual.<br>
-    - <em>Auditori:</em> Membutuhkan penjelasan lisan, diskusi kelompok, dan tanya jawab.<br>
-    - <em>Kinestetik:</em> Membutuhkan kegiatan eksplorasi, praktik, dan latihan langsung.
-  </li>
-</ul>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">B. Identifikasi</h4>
+<p><strong>Identifikasi Murid:</strong><br>
+Murid memiliki pengetahuan awal terkait konsep dasar dari pembelajaran sebelumnya, namun memerlukan penguatan dalam menghubungkannya ke dalam konteks nyata. Minat belajar murid tinggi terhadap topik yang dekat dengan kehidupan sehari-hari (seperti jual beli, proporsi, atau aplikasi teknologi), dengan kebutuhan belajar yang mencakup penguatan analisis bagi kemampuan rendah serta tantangan pemecahan masalah bagi yang berprestasi.</p>
+<p><strong>Materi Pelajaran:</strong><br>
+- <em>Faktual:</em> Pengertian dasar, notasi, dan istilah penting terkait ${tpObj.materi}.<br>
+- <em>Konseptual:</em> Hubungan antar unsur, prinsip proporsionalitas, skala, dan laju perubahan dalam kehidupan sehari-hari.<br>
+- <em>Prosedural:</em> Langkah-langkah sistematis dalam menyederhanakan, menghitung, dan menyelesaikan masalah menggunakan operasi aritmetika.<br>
+- <em>Metakognitif:</em> Refleksi murid mengenai bagaimana konsep ini membantu pengambilan keputusan dalam situasi nyata.</p>
+<p><strong>Dimensi Profil Lulusan:</strong><br>
+Penalaran kritis (murid mampu menganalisis dan menyelesaikan masalah secara logis dan terstruktur).</p>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">C. KARAKTERISTIK MATERI PELAJARAN</h4>
-<ul style="margin-top: 5px; margin-bottom: 20px;">
-  <li><strong>Jenis Pengetahuan:</strong> Konseptual dan Prosedural terkait materi ${tpObj.materi}.</li>
-  <li><strong>Relevansi Nyata:</strong> Sangat erat kaitannya dengan perkembangan teknologi, sains, dan fenomena alam sekitar.</li>
-  <li><strong>Tingkat Kesulitan:</strong> Sedang, membangun penalaran kritis dan abstrak peserta didik.</li>
-  <li><strong>Struktur Materi:</strong> Disusun secara hirarkis dari konsep dasar hingga pemecahan masalah kompleks.</li>
-  <li><strong>Integrasi Nilai dan Karakter:</strong> Keimanan dan ketakwaan, bernalar kritis, kreativitas, gotong royong, kemandirian, serta kepedulian.</li>
-</ul>
-
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">D. DIMENSI PROFIL LULUSAN</h4>
-<ul style="margin-top: 5px; margin-bottom: 20px;">
-  <li><strong>Keimanan dan Ketakwaan Terhadap Tuhan Yang Maha Esa, dan Berakhlak Mulia:</strong> Mengagumi keteraturan ciptaan Tuhan melalui konsep ilmu.</li>
-  <li><strong>Penalaran Kritis:</strong> Dilatih menemukan pola, menganalisis argumen, dan memecahkan masalah non-rutin.</li>
-  <li><strong>Kolaborasi:</strong> Bekerja sama dalam kelompok untuk membangun komunikasi dan menghargai pendapat.</li>
-  <li><strong>Kemandirian:</strong> Bertanggung jawab penuh terhadap proses belajar mandiri.</li>
-</ul>
-
-<h3 style="color: #1a3a5c; margin-top: 30px; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">DESAIN PEMBELAJARAN</h3>
-
-<h4 style="color: #1a3a5c;">A. CAPAIAN PEMBELAJARAN (CP)</h4>
-<p style="margin-bottom: 15px;">${d.cpUmum}</p>
-
-<h4 style="color: #1a3a5c;">B. LINTAS DISIPLIN ILMU</h4>
-<p style="margin-bottom: 15px;">Keterkaitan materi ${tpObj.materi} dengan bidang ilmu lain seperti Informatika, Sains (Fisika/Biologi), dan fenomena sosial/ekonomi.</p>
-
-<h4 style="color: #1a3a5c;">C. TUJUAN PEMBELAJARAN</h4>
-<p style="margin-bottom: 15px;"><strong>[${tpObj.kode}]</strong> ${tpObj.tujuan} (${tpObj.pertemuanCount * 2} JP)</p>
-
-<h4 style="color: #1a3a5c;">D. TOPIK PEMBELAJARAN KONTEKSTUAL</h4>
-<p style="margin-bottom: 15px;">Penerapan langsung konsep ${tpObj.materi} dalam berbagai studi kasus nyata di masyarakat dan teknologi modern.</p>
-
-<h4 style="color: #1a3a5c;">E. KERANGKA PEMBELAJARAN</h4>
-<ul style="margin-bottom: 20px;">
-  <li><strong>Praktik Pedagogik:</strong> Discovery Learning / Problem-Based Learning dengan pendekatan <em>Deep Learning</em> (Mindful, Meaningful, Joyful Learning).</li>
-  <li><strong>Strategi Diferensiasi:</strong> Diferensiasi Konten, Proses, dan Produk sesuai kesiapan belajar murid.</li>
-  <li><strong>Kemitraan Pembelajaran:</strong> Kolaborasi antar guru bidang studi dan pemanfaatan sumber digital interaktif.</li>
-  <li><strong>Lingkungan Belajar:</strong> Pengaturan ruang fisik fleksibel, ruang virtual (Google Classroom), dan budaya kelas positif.</li>
-  <li><strong>Pemanfaatan Digital:</strong> Pemanfaatan platform asesmen digital (Quizizz, Google Forms) dan media presentasi (Canva/PowerPoint).</li>
-</ul>
-
-<h4 style="color: #1a3a5c;">F. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI</h4>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">C. Desain Pembelajaran</h4>
+<p><strong>Capaian Pembelajaran:</strong><br>
+${d.cpUmum}</p>
+<p><strong>Tujuan Pembelajaran:</strong><br>
+[${tpObj.kode}] ${tpObj.tujuan}</p>
+<p><strong>Lintas Disiplin Ilmu:</strong><br>
+Integrasi dengan literasi finansial (ekonomi rumah tangga/keuangan) dan ilmu pengetahuan alam untuk memperkaya pemahaman dalam konteks interdisipliner.</p>
+<p><strong>Tujuan Pembelajaran (Rincian per pertemuan):</strong><br>
 ${Array.from({ length: tpObj.pertemuanCount }).map((_, i) => `
-<div style="border: 1px solid #cbd5e0; padding: 12px; border-radius: 6px; margin-bottom: 15px; background-color: #fafafa;">
-  <h5 style="color: #1a3a5c; margin-top: 0;">PERTEMUAN ${i + 1} (2 JP : 80 MENIT)</h5>
-  <p><strong>Topik:</strong> Pendalaman ${tpObj.materi} (Bagian ${i + 1})</p>
-  <p><strong>1. KEGIATAN PENDAHULUAN (15 MENIT)</strong><br>
-  - Orientasi (salam, doa, presensi).<br>
-  - Apersepsi (Mindful): Mengaitkan pengetahuan awal dengan materi.<br>
-  - Motivasi (Meaningful): Menyajikan masalah kontekstual nyata.<br>
-  - Penyampaian Tujuan Pembelajaran.</p>
-  
-  <p><strong>2. KEGIATAN INTI (55 MENIT)</strong><br>
-  - Eksplorasi & Diskusi Kelompok (Joyful & Bermakna): Siswa menyelidiki LKPD secara kolaboratif.<br>
-  - Presentasi & Konfirmasi: Perwakilan kelompok memaparkan hasil temuan dan guru memberikan penguatan.<br>
-  - Diferensiasi: Bimbingan khusus bagi yang memerlukan dan tantangan bagi siswa cepat.</p>
-  
-  <p><strong>3. KEGIATAN PENUTUP (10 MENIT)</strong><br>
-  - Refleksi bersama mengenai inti pembelajaran hari ini.<br>
-  - Rangkuman materi dan penugasan tindak lanjut / latihan mandiri.<br>
-  - Doa dan salam penutup.</p>
-</div>
-`).join('')}
+- Pertemuan ${i + 1} (80 menit): Peserta didik mendalami dan menerapkan konsep dasar hingga menganalisis aplikasi materi ${tpObj.materi} melalui soal kontekstual dengan ketepatan minimal 80%.
+`).join('')}</p>
+<p><strong>Topik Pembelajaran:</strong><br>
+${Array.from({ length: tpObj.pertemuanCount }).map((_, i) => `
+- Pertemuan ${i + 1}: Eksplorasi konsep, notasi, dan aplikasi pemecahan masalah kontekstual bagian ${i + 1}.
+`).join('')}</p>
+<p><strong>Praktik Pedagogis:</strong><br>
+Pendekatan Pembelajaran Mendalam (Deep Learning) berbasis inkuiri terbimbing dan Problem-Based Learning (PBL) untuk mendalami konsep secara bermakna (Mindful, Meaningful, Joyful Learning).</p>
+<p><strong>Kemitraan Pembelajaran:</strong><br>
+Keterlibatan lingkungan sekitar dan tugas pengamatan sederhana di rumah untuk memperkuat koneksi sekolah dengan kehidupan nyata.</p>
+<p><strong>Lingkungan Pembelajaran & Pemanfaatan Digital:</strong><br>
+Pengaturan ruang kelas kolaboratif, pemanfaatan presentasi digital (PowerPoint/Canva), video pembelajaran interaktif, serta lembar kerja digital/cetak.</p>
 
-<h4 style="color: #1a3a5c;">G. ASESMEN PEMBELAJARAN</h4>
-<ul style="margin-bottom: 20px;">
-  <li><strong>Asesmen Diagnostik:</strong> Tanya jawab kesiapan awal dan kuis singkat prasyarat.</li>
-  <li><strong>Asesmen Formatif:</strong> Observasi keaktifan diskusi kelompok, LKPD harian, dan performa presentasi.</li>
-  <li><strong>Asesmen Sumatif:</strong> Tes tertulis pilihan ganda/esai serta penilaian proyek/infografis komprehensif akhir bab.</li>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">D. Pengalaman Belajar</h4>
+<p><strong>Kegiatan Awal (15 menit per pertemuan):</strong><br>
+Prinsip Bermakna dan Menggembirakan (mengaitkan apersepsi dengan pengalaman sehari-hari, absensi, doa bersama, serta penyampaian motivasi belajar).</p>
+<p><strong>Kegiatan Inti (55 menit per pertemuan):</strong><br>
+- <em>Memahami (20 menit):</em> Eksplorasi materi melalui stimulus visual/kontekstual, diskusi kelompok kecil memahami definisi dan notasi.<br>
+- <em>Mengaplikasikan (25 menit):</em> Kerja kelompok menyelesaikan LKPD dan latihan soal terstruktur dengan bimbingan guru.<br>
+- <em>Merefleksi (10 menit):</em> Penulisan jurnal refleksi singkat, kesimpulan bersama, dan penguatan positif.</p>
+<p><strong>Kegiatan Penutup (10 menit per pertemuan):</strong><br>
+Penyimpulan materi bersama, umpan balik positif atas partisipasi murid, penjelasan tindak lanjut/tugas rumah, serta doa dan salam penutup.</p>
+
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">E. Asesmen Pembelajaran</h4>
+<p><strong>Awal (Diagnostik):</strong> Kuis lisan cepat / tanya jawab pengetahuan prasyarat.<br>
+<strong>Proses (Formatif):</strong> Observasi keaktifan diskusi kelompok dan rubrik penilaian LKPD harian.<br>
+<strong>Akhir (Sumatif):</strong> Tes tertulis berupa soal uraian dan pilihan ganda kontekstual.</p>
+
+<div style="page-break-before: always;"></div>
+<h3 style="text-align: center; color: #1a3a5c;">LEMBAR LAMPIRAN PERANGKAT PEMBELAJARAN</h3>
+
+<h4 style="color: #1a3a5c;">1. Asesmen Awal Pembelajaran</h4>
+<p>Soal asesmen diagnostik lisan untuk mengukur kesiapan belajar peserta didik terhadap prasyarat materi ${tpObj.materi}.</p>
+
+<h4 style="color: #1a3a5c;">2. Rubrik Penilaian (Skala 4)</h4>
+<ul style="margin-bottom: 15px;">
+  <li><strong>Skala 4 (Sangat Baik):</strong> Murid aktif, kolaboratif, memahami konsep secara utuh tanpa kesalahan.</li>
+  <li><strong>Skala 3 (Baik):</strong> Murid aktif berkontribusi, memahami dasar konsep dengan sedikit kesalahan kecil.</li>
+  <li><strong>Skala 2 (Cukup):</strong> Memahami pengertian umum namun masih kesulitan dalam prosedur aplikasi.</li>
+  <li><strong>Skala 1 (Kurang):</strong> Belum memahami konsep dasar dan memerlukan bimbingan intensif.</li>
 </ul>
+
+<h4 style="color: #1a3a5c;">3. Asesmen Akhir Pembelajaran (Contoh Soal Sumatif)</h4>
+<p>5 Soal uraian/pilihan ganda kontekstual untuk mengukur pemahaman komprehensif peserta didik terhadap materi ${tpObj.materi}.</p>
+
+<div style="page-break-before: always;"></div>
+<h3 style="text-align: center; color: #1a3a5c;">LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
+<table style="width: 100%; border: none; margin-bottom: 15px;" border="0">
+  <tr>
+    <td style="border: none; padding: 4px;"><strong>Nama Peserta Didik:</strong> .................................................</td>
+    <td style="border: none; padding: 4px; text-align: right;"><strong>Kelas / Absen:</strong> ${d.fase.split('/')[1] || 'VII'} / .....</td>
+  </tr>
+  <tr>
+    <td style="border: none; padding: 4px;"><strong>Mata Pelajaran:</strong> ${d.mapel}</td>
+    <td style="border: none; padding: 4px; text-align: right;"><strong>Tanggal:</strong> .................................</td>
+  </tr>
+</table>
+
+<p><strong>Petunjuk Penggunaan LKPD:</strong><br>
+Baca setiap bagian dengan teliti, diskusikan bersama kelompokmu secara aktif dan berkesadaran, serta gunakan contoh nyata dalam kehidupan sehari-hari agar pembelajaran lebih bermakna!</p>
+
+<p><strong>A. Memahami (Orientasi Masalah)</strong><br>
+Amati dan pelajari konsep dasar materi ${tpObj.materi} melalui stimulus yang diberikan guru.<br>
+<em>Pertanyaan Pemahaman:</em><br>
+1. Tuliskan definisi dan notasi utama dari materi ini!<br>
+<span style="color: #a0aec0; font-style: italic;">Jawab: .................................................................................................................................................</span></p>
+
+<p><strong>B. Mengaplikasikan (Eksplorasi & Diskusi Kelompok)</strong><br>
+Selesaikan studi kasus kontekstual berikut bersama kelompokmu secara teliti.<br>
+<em>Kasus Kontekstual:</em><br>
+<span style="color: #a0aec0; font-style: italic;">Tuliskan langkah-langkah penyelesaian dan hasil perhitungan kelompok di sini...</span></p>
+
+<p><strong>C. Merefleksikan (Kesimpulan & Evaluasi)</strong><br>
+Bagaimana penerapan materi ${tpObj.materi} ini dalam membantu aktivitas kehidupan sehari-hari?<br>
+<span style="color: #a0aec0; font-style: italic;">Jawab: .................................................................................................................................................</span></p>
+
+<p><strong>Cek Pemahaman Diri (Lingkari pilihanmu):</strong><br>
+- Saya paham konsep dasar: Sangat / Ya / Cukup / Belum<br>
+- Saya bisa aplikasikan dalam kasus nyata: Sangat / Ya / Cukup / Belum</p>
+
+<h4 style="color: #1a3a5c; margin-top: 20px;">Catatan Guru:</h4>
+<div style="border: 1px dashed #cbd5e0; min-height: 60px; padding: 8px; margin-bottom: 30px; color: #a0aec0; font-style: italic;">Catatan evaluasi atau umpan balik guru untuk perkembangan belajar siswa...</div>
+
+<table border="0" style="width: 100%; text-align: center; margin-top: 3rem; page-break-inside: avoid;">
+  <tr>
+    <td style="width: 50%; vertical-align: top;">
+      Menyetujui,<br>Kepala ${d.sekolah}<br><br><br><br>
+      <b>${d.kepsek}</b><br>NIP. ${d.nipKepsek}
+    </td>
+    <td style="width: 50%; vertical-align: top;">
+      ${d.kotaTanggal}<br>Guru Mata Pelajaran<br><br><br><br>
+      <b>${d.guru}</b><br>NIP. ${d.nipGuru}
+    </td>
+  </tr>
+</table>
 
 ${getCommonRules(d)}
 `;
