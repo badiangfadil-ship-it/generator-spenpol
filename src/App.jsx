@@ -193,198 +193,134 @@ ${getCommonRules(d)}
 `;
 
 const getPromptModul = (d, tpObj) => `
-Anda adalah seorang Ahli Kurikulum Merdeka yang merancang Modul Ajar Presisi Berorientasi Deep Learning (Mindful, Meaningful, Joyful) sesuai standar dokumen referensi resmi.
+Anda adalah seorang Ahli Kurikulum Merdeka yang merancang **Modul Ajar Deep Learning** berkualitas tinggi sesuai standar dokumen referensi resmi.
 
-Buat dokumen MODUL AJAR yang komprehensif mengikuti struktur, format tabel, dan komponen persis seperti urutan di bawah ini. JANGAN ubah atau kurangi bagian-bagian utamanya:
+Buat dokumen MODUL AJAR yang komprehensif mengikuti format visual, tata letak, struktur hierarki, dan isi teks secara lengkap dan mendalam (JANGAN diringkas) persis seperti urutan di bawah ini:
 
 Mata Pelajaran: ${d.mapel}
-Fase / Kelas: ${d.fase}
-Semester: ${d.semester}
-Materi Pokok / Topik: ${tpObj.materi}
-Tujuan Pembelajaran (TP) Utama: [${tpObj.kode}] ${tpObj.tujuan}
+Bab / Topik: ${tpObj.materi}
+Fase / Kelas / Semester: ${d.fase} / ${d.semester}
+Tujuan Pembelajaran Sesi Ini: [${tpObj.kode}] ${tpObj.tujuan}
+Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} pertemuan)
 Model Pembelajaran: ${d.modelPembelajaran}
-Penyusun: ${d.guru} / ${d.tahun.split('/')[0]}
-Alokasi Waktu Sesi Ini: ${tpObj.pertemuanCount} Pertemuan (${tpObj.pertemuanCount * 60} menit atau setara)
+Nama Penyusun: ${d.guru}
+Nama Sekolah: ${d.sekolah}
 
 STRUKTUR FORMAT DOKUMEN MODUL AJAR HTML WAJIB:
 
-<h2 style="text-align: center; color: #1a3a5c;">MODUL AJAR ${d.mapel.toUpperCase()} SMP</h2>
-<h3 style="text-align: center; color: #1a3a5c; margin-bottom: 20px;">FASE ${d.fase.split('/')[0].replace('Fase ','').toUpperCase()}</h3>
+<h2 style="text-align: center; color: #1a3a5c;">MODUL AJAR DEEP LEARNING</h2>
+<h3 style="text-align: center; color: #1a3a5c; text-transform: uppercase;">MATA PELAJARAN : ${d.mapel.toUpperCase()}</h3>
+<h3 style="text-align: center; color: #1a3a5c; text-transform: uppercase; margin-bottom: 25px;">BAB / TOPIK : ${tpObj.materi.toUpperCase()}</h3>
 
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;" border="1">
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">A. IDENTITAS MODUL</h4>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
   <tr>
-    <td style="width: 30%; font-weight: bold; padding: 6px; background-color: #f2f2f2;">A. Identitas Modul</td>
-    <td style="padding: 6px;">
-      <strong>Modul:</strong> ${d.mapel}<br>
-      <strong>Penyusun/Tahun:</strong> ${d.guru} / ${d.tahun.split('/')[0]}<br>
-      <strong>Kelas/Fase Capaian:</strong> ${d.fase.split('/')[1] || 'VII'} / ${d.fase.split('/')[0]}<br>
-      <strong>Elemen/Topik:</strong> ${tpObj.materi}<br>
-      <strong>Alokasi Waktu:</strong> ${tpObj.pertemuanCount * 60} menit (${tpObj.pertemuanCount} Pertemuan)<br>
-      <strong>Target Peserta Didik:</strong> Regular/tipikal<br>
-      <strong>Capaian Pembelajaran:</strong> ${d.cpUmum}
-    </td>
+    <td style="width: 30%; font-weight: bold; padding: 6px; background-color: #f2f2f2;">Nama Sekolah</td>
+    <td style="padding: 6px;">${d.sekolah}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">B. Dimensi Profil Lulusan</td>
-    <td style="padding: 6px;">Penalaran kritis, kolaborasi, kreativitas, dan komunikasi</td>
+    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Nama Penyusun</td>
+    <td style="padding: 6px;">${d.guru}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">C. Model dan Metode</td>
-    <td style="padding: 6px;">
-      a. Model Pembelajaran: ${d.modelPembelajaran}<br>
-      b. Metode Pembelajaran: Diskusi kelas, diskusi kelompok kecil, presentasi.<br>
-      c. Pendekatan Pembelajaran: Deep Learning (Pembelajaran Mendalam)
-    </td>
+    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Mata Pelajaran</td>
+    <td style="padding: 6px;">${d.mapel}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">D. Mitra Pembelajaran</td>
-    <td style="padding: 6px;">Masyarakat sekitar (Petani, pelaku usaha, atau narasumber relevan)</td>
+    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Kelas / Fase / Semester</td>
+    <td style="padding: 6px;">${d.fase.split('/')[1] || 'VII'} / ${d.fase.split('/')[0]} / ${d.semester}</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">E. Lingkungan Pembelajaran</td>
-    <td style="padding: 6px;">
-      1) Ruang Fisik: Lingkungan sekitar sekolah / kelas<br>
-      2) Ruang Virtual: Google Form untuk refleksi, platform digital pendukung asesmen<br>
-      3) Budaya belajar: Kolaboratif, berpartisipasi aktif, dan rasa ingin tahu tinggi
-    </td>
+    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Alokasi Waktu</td>
+    <td style="padding: 6px;">${tpObj.pertemuanCount * 2} JP (${tpObj.pertemuanCount} kali pertemuan)</td>
   </tr>
   <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">F. Pemanfaatan Digital</td>
-    <td style="padding: 6px;">Asesmen interaktif menggunakan platform digital (Wordwall / Quizizz / Google Forms)</td>
-  </tr>
-  <tr>
-    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">G. Sarana dan Prasarana</td>
-    <td style="padding: 6px;">
-      ➤ <strong>Sarana:</strong> Laptop, HP, LCD, Proyektor, Kuota Internet<br>
-      ➤ <strong>Prasarana:</strong> Buku peserta didik, buku guru, LKPD
-    </td>
+    <td style="font-weight: bold; padding: 6px; background-color: #f2f2f2;">Tahun Pelajaran</td>
+    <td style="padding: 6px;">${d.tahun}</td>
   </tr>
 </table>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">H. Tujuan Pembelajaran</h4>
-<ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Peserta didik memahami konsep dasar mengenai ${tpObj.materi} melalui diskusi kelas dengan tepat.</li>
-  <li>Peserta didik dapat menganalisis penyebab dan dampak dari ${tpObj.materi} terhadap makhluk hidup dan lingkungan.</li>
-  <li>Peserta didik dapat merancang upaya-upaya pencegahan dan penanggulangan terkait ${tpObj.materi} melalui diskusi kelompok.</li>
-  <li>Peserta didik dapat menyajikan hasil rancangan upaya pencegahan/solusi dalam bentuk karya kreatif (kampanye/infografis/poster).</li>
-</ol>
-
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">I. Pertanyaan Pemantik</h4>
-<ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Apa saja dampak utama dari permasalahan ${tpObj.materi} terhadap kehidupan manusia dan lingkungan?</li>
-  <li>Bagaimana fenomena ini memengaruhi ketersediaan sumber daya dan kehidupan sehari-hari?</li>
-  <li>Solusi dan upaya nyata apa yang dapat kita lakukan untuk mengatasi atau beradaptasi dengan kondisi tersebut?</li>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">B. IDENTIFIKASI KESIAPAN PESERTA DIDIK</h4>
+<ul style="margin-top: 5px; margin-bottom: 20px;">
+  <li><strong>Pengetahuan Awal:</strong> Peserta didik telah memahami konsep dasar prasyarat yang relevan dengan topik ${tpObj.materi}.</li>
+  <li><strong>Minat:</strong> Peserta didik memiliki minat yang beragam terhadap teknologi, sains, dan aplikasi nyata dalam kehidupan.</li>
+  <li><strong>Latar Belakang:</strong> Peserta didik berasal dari latar belakang sosial budaya beragam dengan tingkat pemahaman bervariasi.</li>
+  <li><strong>Kebutuhan Belajar:</strong><br>
+    - <em>Visual:</em> Membutuhkan diagram, peta konsep, dan tayangan visual.<br>
+    - <em>Auditori:</em> Membutuhkan penjelasan lisan, diskusi kelompok, dan tanya jawab.<br>
+    - <em>Kinestetik:</em> Membutuhkan kegiatan eksplorasi, praktik, dan latihan langsung.
+  </li>
 </ul>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">J. Materi Esensial</h4>
-<p><strong>Topik: ${tpObj.materi}</strong></p>
-<ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li>Pengertian dan konsep dasar ${tpObj.materi}.</li>
-  <li>Faktor penyebab dan dampak langsung maupun tidak langsung terhadap lingkungan.</li>
-  <li>Upaya mitigasi, adaptasi, serta solusi pemecahan masalah secara berkelanjutan.</li>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">C. KARAKTERISTIK MATERI PELAJARAN</h4>
+<ul style="margin-top: 5px; margin-bottom: 20px;">
+  <li><strong>Jenis Pengetahuan:</strong> Konseptual dan Prosedural terkait materi ${tpObj.materi}.</li>
+  <li><strong>Relevansi Nyata:</strong> Sangat erat kaitannya dengan perkembangan teknologi, sains, dan fenomena alam sekitar.</li>
+  <li><strong>Tingkat Kesulitan:</strong> Sedang, membangun penalaran kritis dan abstrak peserta didik.</li>
+  <li><strong>Struktur Materi:</strong> Disusun secara hirarkis dari konsep dasar hingga pemecahan masalah kompleks.</li>
+  <li><strong>Integrasi Nilai dan Karakter:</strong> Keimanan dan ketakwaan, bernalar kritis, kreativitas, gotong royong, kemandirian, serta kepedulian.</li>
 </ul>
 
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">K. Langkah-langkah Pembelajaran Mendalam (Deep Learning)</h4>
-<table style="width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 15px;" border="1">
-  <thead>
-    <tr style="background-color: #1a3a5c; color: white;">
-      <th style="padding: 8px; width: 15%;">Kegiatan Pembelajaran</th>
-      <th style="padding: 8px; width: 20%;">Sintaks Problem Based Learning</th>
-      <th style="padding: 8px; width: 50%;">Deskripsi Kegiatan (Prinsip & Pengalaman Belajar)</th>
-      <th style="padding: 8px; width: 15%;">Alokasi Waktu</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; font-weight: bold;">Pendahuluan</td>
-      <td style="padding: 8px;">Menciptakan situasi (Memahami)</td>
-      <td style="padding: 8px;">
-        • Guru mengucapkan salam, berdoa bersama, dan mengecek kehadiran.<br>
-        • Melakukan kegiatan <em>mindfulness</em> (berkesadaran) untuk kesiapan belajar.<br>
-        • Guru menampilkan stimulus/gambar fenomena terkait ${tpObj.materi} dan mengajukan pertanyaan pemantik pengalaman siswa (Bermakna).
-      </td>
-      <td style="padding: 8px;">15 menit</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; font-weight: bold;" rowspan="4">Kegiatan Inti</td>
-      <td style="padding: 8px;">Tahap 1: Mengorientasikan peserta didik pada masalah</td>
-      <td style="padding: 8px;">
-        • Guru membagikan bahan bacaan/artikel terkait ${tpObj.materi}.<br>
-        • Peserta didik membaca dan merumuskan permasalahan utama dari bacaan tersebut (Memahami & Bermakna).
-      </td>
-      <td style="padding: 8px;" rowspan="4">70 menit</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px;">Tahap 2: Mengorganisasi peserta didik untuk belajar</td>
-      <td style="padding: 8px;">
-        • Siswa dibagi ke dalam kelompok heterogen (3-4 orang).<br>
-        • Guru membagikan LKPD untuk dikerjakan secara bergotong-royong.
-      </td>
-    </tr>
-    <tr>
-      <td style="padding: 8px;">Tahap 3: Membimbing penyelidikan individual/kelompok</td>
-      <td style="padding: 8px;">
-        • Peserta didik berdiskusi aktif mencari solusi dan informasi pendukung dari buku atau internet (Kritis & Kreatif).<br>
-        • Guru memberikan bimbingan/<em>scaffolding</em> bagi kelompok yang memerlukan (Menggembirakan).
-      </td>
-    </tr>
-    <tr>
-      <td style="padding: 8px;">Tahap 4: Mengembangkan dan menyajikan hasil karya</td>
-      <td style="padding: 8px;">
-        • Kelompok menyusun laporan/hasil karya kreatif (tulisan/poster/infografis/video) tentang solusi pencegahan.<br>
-        • Perwakilan kelompok mempresentasikan hasil diskusinya di depan kelas secara percaya diri (Mengaplikasi).
-      </td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; font-weight: bold;">Penutup</td>
-      <td style="padding: 8px;">Tahap 5: Menganalisis & mengevaluasi proses pemecahan masalah</td>
-      <td style="padding: 8px;">
-        • Guru bersama peserta didik mengevaluasi dan menyimpulkan hasil pemecahan masalah.<br>
-        • Melakukan refleksi pembelajaran (perasaan, hal penting yang dipelajari, dan kaitan dengan kehidupan sehari-hari).<br>
-        • Pemberian kuis formatif penutup (Wordwall) dan apresiasi kepada seluruh siswa (Berkesadaran).
-      </td>
-      <td style="padding: 8px;">15 menit</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">L. Penilaian atau Asesmen</h4>
-<ol style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Jenis Asesmen:</strong> Diagnostik non-kognitif, Formatif (proses diskusi), dan Sumatif (tes tertulis / produk).</li>
-  <li><strong>Metode & Instrumen:</strong> Lembar pengamatan kinerja kelompok, rubrik penilaian dimensi profil lulusan (penalaran kritis, kolaborasi, kreativitas, komunikasi), dan tes tertulis.</li>
-</ol>
-
-<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-top: 20px;">M. Refleksi Guru dan Peserta Didik</h4>
-<ul style="margin-top: 5px; margin-bottom: 15px;">
-  <li><strong>Refleksi Guru:</strong> Apakah tujuan pembelajaran tercapai? Bagaimana keaktifan siswa selama model ${d.modelPembelajaran} diterapkan?</li>
-  <li><strong>Refleksi Peserta Didik:</strong> Bagian mana yang paling menarik? Apa pelajaran penting yang dapat diterapkan dalam kehidupan sehari-hari?</li>
+<h4 style="color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">D. DIMENSI PROFIL LULUSAN</h4>
+<ul style="margin-top: 5px; margin-bottom: 20px;">
+  <li><strong>Keimanan dan Ketakwaan Terhadap Tuhan Yang Maha Esa, dan Berakhlak Mulia:</strong> Mengagumi keteraturan ciptaan Tuhan melalui konsep ilmu.</li>
+  <li><strong>Penalaran Kritis:</strong> Dilatih menemukan pola, menganalisis argumen, dan memecahkan masalah non-rutin.</li>
+  <li><strong>Kolaborasi:</strong> Bekerja sama dalam kelompok untuk membangun komunikasi dan menghargai pendapat.</li>
+  <li><strong>Kemandirian:</strong> Bertanggung jawab penuh terhadap proses belajar mandiri.</li>
 </ul>
 
-<div style="page-break-before: always;"></div>
-<h3 style="text-align: center; color: #1a3a5c;">LAMPIRAN: LEMBAR KERJA PESERTA DIDIK (LKPD)</h3>
+<h3 style="color: #1a3a5c; margin-top: 30px; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px;">DESAIN PEMBELAJARAN</h3>
 
-<div style="border: 2px solid #1a3a5c; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-  <h4 style="text-align: center; color: #1a3a5c; margin-top: 0;">LKPD: ANALISIS DAN SOLUSI ${tpObj.materi.toUpperCase()}</h4>
-  <table style="width: 100%; border: none; margin-bottom: 15px;" border="0">
-    <tr>
-      <td style="border: none; padding: 4px;"><strong>Nama Anggota Kelompok:</strong><br>1. .........................................<br>2. .........................................</td>
-      <td style="border: none; padding: 4px; text-align: right;"><strong>Kelas:</strong> ${d.fase.split('/')[1] || 'VII'}<br><strong>Tanggal:</strong> .........................</td>
-    </tr>
-  </table>
+<h4 style="color: #1a3a5c;">A. CAPAIAN PEMBELAJARAN (CP)</h4>
+<p style="margin-bottom: 15px;">${d.cpUmum}</p>
 
-  <p><strong>A. Tujuan:</strong> Melalui diskusi, peserta didik dapat menganalisis penyebab, dampak, serta merancang solusi terkait ${tpObj.materi}.</p>
-  <p><strong>B. Rumusan Masalah:</strong> Deskripsikan permasalahan utama yang berkaitan dengan topik ${tpObj.materi} berdasarkan studi kasus/bacaan!</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan hasil diskusi kelompok di sini...</div>
+<h4 style="color: #1a3a5c;">B. LINTAS DISIPLIN ILMU</h4>
+<p style="margin-bottom: 15px;">Keterkaitan materi ${tpObj.materi} dengan bidang ilmu lain seperti Informatika, Sains (Fisika/Biologi), dan fenomena sosial/ekonomi.</p>
 
-  <p><strong>C. Analisis Penyebab & Dampak:</strong> Tentukan faktor pendorong dan dampak nyata bagi lingkungan dan makhluk hidup.</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan analisis di sini...</div>
+<h4 style="color: #1a3a5c;">C. TUJUAN PEMBELAJARAN</h4>
+<p style="margin-bottom: 15px;"><strong>[${tpObj.kode}]</strong> ${tpObj.tujuan} (${tpObj.pertemuanCount * 2} JP)</p>
 
-  <p><strong>D. Mencari Solusi / Mitigasi:</strong> Rancanglah upaya pencegahan atau penanggulangan terbaik.</p>
-  <div style="border: 1px dashed #718096; min-height: 60px; padding: 8px; margin-bottom: 10px; color: #a0aec0; font-style: italic;">Tuliskan solusi kreatif di sini...</div>
+<h4 style="color: #1a3a5c;">D. TOPIK PEMBELAJARAN KONTEKSTUAL</h4>
+<p style="margin-bottom: 15px;">Penerapan langsung konsep ${tpObj.materi} dalam berbagai studi kasus nyata di masyarakat dan teknologi modern.</p>
 
-  <p><strong>E. Kesimpulan:</strong> Buatlah kesimpulan singkat dari hasil kerja kelompok Anda.</p>
-  <div style="border: 1px dashed #718096; min-height: 50px; padding: 8px; color: #a0aec0; font-style: italic;">Tuliskan kesimpulan di sini...</div>
+<h4 style="color: #1a3a5c;">E. KERANGKA PEMBELAJARAN</h4>
+<ul style="margin-bottom: 20px;">
+  <li><strong>Praktik Pedagogik:</strong> Discovery Learning / Problem-Based Learning dengan pendekatan <em>Deep Learning</em> (Mindful, Meaningful, Joyful Learning).</li>
+  <li><strong>Strategi Diferensiasi:</strong> Diferensiasi Konten, Proses, dan Produk sesuai kesiapan belajar murid.</li>
+  <li><strong>Kemitraan Pembelajaran:</strong> Kolaborasi antar guru bidang studi dan pemanfaatan sumber digital interaktif.</li>
+  <li><strong>Lingkungan Belajar:</strong> Pengaturan ruang fisik fleksibel, ruang virtual (Google Classroom), dan budaya kelas positif.</li>
+  <li><strong>Pemanfaatan Digital:</strong> Pemanfaatan platform asesmen digital (Quizizz, Google Forms) dan media presentasi (Canva/PowerPoint).</li>
+</ul>
+
+<h4 style="color: #1a3a5c;">F. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI</h4>
+${Array.from({ length: tpObj.pertemuanCount }).map((_, i) => `
+<div style="border: 1px solid #cbd5e0; padding: 12px; border-radius: 6px; margin-bottom: 15px; background-color: #fafafa;">
+  <h5 style="color: #1a3a5c; margin-top: 0;">PERTEMUAN ${i + 1} (2 JP : 80 MENIT)</h5>
+  <p><strong>Topik:</strong> Pendalaman ${tpObj.materi} (Bagian ${i + 1})</p>
+  <p><strong>1. KEGIATAN PENDAHULUAN (15 MENIT)</strong><br>
+  - Orientasi (salam, doa, presensi).<br>
+  - Apersepsi (Mindful): Mengaitkan pengetahuan awal dengan materi.<br>
+  - Motivasi (Meaningful): Menyajikan masalah kontekstual nyata.<br>
+  - Penyampaian Tujuan Pembelajaran.</p>
+  
+  <p><strong>2. KEGIATAN INTI (55 MENIT)</strong><br>
+  - Eksplorasi & Diskusi Kelompok (Joyful & Bermakna): Siswa menyelidiki LKPD secara kolaboratif.<br>
+  - Presentasi & Konfirmasi: Perwakilan kelompok memaparkan hasil temuan dan guru memberikan penguatan.<br>
+  - Diferensiasi: Bimbingan khusus bagi yang memerlukan dan tantangan bagi siswa cepat.</p>
+  
+  <p><strong>3. KEGIATAN PENUTUP (10 MENIT)</strong><br>
+  - Refleksi bersama mengenai inti pembelajaran hari ini.<br>
+  - Rangkuman materi dan penugasan tindak lanjut / latihan mandiri.<br>
+  - Doa dan salam penutup.</p>
 </div>
+`).join('')}
+
+<h4 style="color: #1a3a5c;">G. ASESMEN PEMBELAJARAN</h4>
+<ul style="margin-bottom: 20px;">
+  <li><strong>Asesmen Diagnostik:</strong> Tanya jawab kesiapan awal dan kuis singkat prasyarat.</li>
+  <li><strong>Asesmen Formatif:</strong> Observasi keaktifan diskusi kelompok, LKPD harian, dan performa presentasi.</li>
+  <li><strong>Asesmen Sumatif:</strong> Tes tertulis pilihan ganda/esai serta penilaian proyek/infografis komprehensif akhir bab.</li>
+</ul>
 
 ${getCommonRules(d)}
 `;
