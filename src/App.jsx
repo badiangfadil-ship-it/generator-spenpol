@@ -506,12 +506,12 @@ function Dashboard({ onLogout }) {
     nipKepsek: '19801007 200502 1 003',
     kotaTanggal: 'Poli-Polia, 14 Juli 2026',
     
-    elemenList: '1 | PK | Pemahaman Konsep | KP | Keterampilan Proses',
-    cpUmum: 'Mata pelajaran Ilmu Pengetahuan Sosial pada Kurikulum Merdeka bertujuan untuk membekali peserta didik agar mampu menganalisis hubungan antara kondisi geografis dan aktivitas masyarakat, memahami sejarah lokal, serta menguasai keterampilan proses penyelidikan...',
-    cpElemen: 'Pemahaman Konsep: Memahami Lingkungan Sekitar, Menganalisis Interaksi Sosial, Memahami Sejarah dan Budaya...\nElemen Keterampilan Proses: Peserta didik Mengamati & Bertanya, Mengorganisasikan & Menganalisis, Menarik Kesimpulan & Mengomunikasikan...',
+    elemenList: 'Masukan Elemen CP disini dan buatkan singkatan, Contoh:| PK | Pemahaman Konsep | KP | Keterampilan Proses dst...',
+    cpUmum: 'Masukan Capaian Pembelajaran (CP) Umum disini....',
+    cpElemen: 'Masukan Capaian Pembelajaran (CP) Per Elemen disini...',
     
     kalender: 'Juli | 5 | 3 | SPMB & MPLS\nAgustus | 4 | 4 | Efektif\nSeptember | 5 | 5 | Efektif\nOktober | 4 | 0 | Efektif\nNovember | 4 | 0 | Efektif\nDesember | 4 | 3 | PAS & Libur',
-    rentangNilai: 'Level 1 (Mulai Berkembang): 0-55 | D\nLevel 2 (Berkembang): 56-70 | C\nLevel 3 (Cakap): 71-85 | B\nLevel 4 (Mahir): 86-100 | A',
+    rentangNilai: 'Level 1 (Belum mencapai tujuan pembelajaran): 0-40 | D\nLevel 2 (Cukup mencapai tujuan pembelajaran): 41-65 | C\nLevel 3 (Sudah mencapai tujuan pembelajaran): 66-85 | B\nLevel 4 (Sangat mencapai tujuan pembelajaran): 86-100 | A',
     
     modelPembelajaran: 'Problem Based Learning (PBL)', 
     dataSebelumnya: '', 
