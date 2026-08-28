@@ -506,9 +506,9 @@ function Dashboard({ onLogout }) {
     nipKepsek: '19801007 200502 1 003',
     kotaTanggal: 'Poli-Polia, 14 Juli 2026',
     
-    elemenList: 'Masukan Elemen CP disini dan buatkan singkatan, Contoh:| PK | Pemahaman Konsep | KP | Keterampilan Proses dst...',
-    cpUmum: 'Masukan Capaian Pembelajaran (CP) Umum disini....',
-    cpElemen: 'Masukan Capaian Pembelajaran (CP) Per Elemen disini...',
+    elemenList: 'Masukan Elemen CP disini dan buatkan singkatan, Contoh: | PK | Pemahaman Konsep | KP | Keterampilan Proses dst...',
+    cpUmum: 'Tulis/Vaste Capaian Pembelajaran (CP) Umum (Rasional Mapel) secara lengkap dikolom ini',
+    cpElemen: 'Tulis/Vaste Capaian Pembelajaran (CP) Per Elemen secara lengkap dikolom ini',
     
     kalender: 'Juli | 5 | 3 | SPMB & MPLS\nAgustus | 4 | 4 | Efektif\nSeptember | 5 | 5 | Efektif\nOktober | 4 | 0 | Efektif\nNovember | 4 | 0 | Efektif\nDesember | 4 | 3 | PAS & Libur',
     rentangNilai: 'Level 1 (Belum mencapai tujuan pembelajaran): 0-40 | D\nLevel 2 (Cukup mencapai tujuan pembelajaran): 41-65 | C\nLevel 3 (Sudah mencapai tujuan pembelajaran): 66-85 | B\nLevel 4 (Sangat mencapai tujuan pembelajaran): 86-100 | A',
